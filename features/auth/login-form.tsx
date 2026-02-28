@@ -31,7 +31,7 @@ const LoginForm = () => {
   }, []);
 
   // ====================== Mutations ====================== \\
-  const loginMutation = useAuthMutation.loginMutation();
+  const loginMutation = useAuthMutation.LoginMutation();
 
   // ====================== Form Submission ====================== \\
   const onSubmit = (data: LoginFormValues) => {

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const useAuthMutation = {
-  loginMutation: () => {
+  LoginMutation: () => {
     const router = useRouter();
     const { login: setGlobalUser } = useAuthStore();
 

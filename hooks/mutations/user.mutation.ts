@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useUserMutation = {
-  changePasswordMutation: () => {
+  ChangePasswordMutation: () => {
     return useMutation<
       ChangePasswordResponse,
       AxiosError<ChangePasswordResponse>,

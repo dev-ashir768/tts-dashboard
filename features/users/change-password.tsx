@@ -28,16 +28,11 @@ import { useForm } from "react-hook-form";
 import { useUserMutation } from "@/hooks/mutations/user.mutation";
 
 interface ChangePasswordProps {
-  initialData?: Partial<ChangePasswordFormValues>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const ChangePassword = ({
-  initialData,
-  open,
-  onOpenChange,
-}: ChangePasswordProps) => {
+const ChangePassword = ({ open, onOpenChange }: ChangePasswordProps) => {
   // ====================== Hooks ====================== \\
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isNewPassword, setIsNewPassoword] = useState<boolean>(false);
@@ -56,7 +51,7 @@ const ChangePassword = ({
   });
 
   // ====================== Mutations ====================== \\
-  const changePasswordMutation = useUserMutation.changePasswordMutation();
+  const changePasswordMutation = useUserMutation.ChangePasswordMutation();
 
   // ====================== Form Submit ====================== \\
   const onSubmit = (data: ChangePasswordFormValues) => {

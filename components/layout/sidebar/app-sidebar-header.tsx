@@ -3,10 +3,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { PROTECTED_ROUTES } from "@/lib/constants";
-import { Blocks, Layers } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Blocks } from "lucide-react";
 
 const AppSidebarHeader = () => {
   return (
