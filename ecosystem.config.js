@@ -4,6 +4,8 @@ module.exports = {
       name: "tts-dashboard",
       script: "bun",
       args: "run start",
+      exec_mode: "cluster",
+      instances: "max",
       interpreter: "none",
       env: {
         NODE_ENV: "production",
