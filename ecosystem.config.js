@@ -2,14 +2,14 @@ module.exports = {
   apps: [
     {
       name: "tts-dashboard",
-      script: "bun",
+      script: "npm",
       args: "run start",
-      exec_mode: "cluster",
+      exec_mode: "fork",
       instances: "1",
       interpreter: "none",
       env: {
         NODE_ENV: "production",
-        PORT: 3000,
+        PORT: 80,
       },
       out_file: "./logs/out.log",
       error_file: "./logs/error.log",
