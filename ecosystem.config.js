@@ -5,7 +5,7 @@ module.exports = {
       script: "bun",
       args: "run start",
       exec_mode: "cluster",
-      instances: "max",
+      instances: "1",
       interpreter: "none",
       env: {
         NODE_ENV: "production",
