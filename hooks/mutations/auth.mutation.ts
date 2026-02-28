@@ -30,9 +30,10 @@ export const useAuthMutation = {
           toast.error("Error: No user data received");
           return;
         }
-        setGlobalUser(userData);
+        setGlobalUser(userData[0]);
         router.push(PROTECTED_ROUTES.DASHBOARD.HOME);
-        toast.success(`Welcome Back, ${userData.full_name.toUpperCase()}`);
+        toast.success(`Welcome Back, ${userData[0].full_name?.toUpperCase()}`);
+        console.log(userData);
       },
       onError: (error) => {
         toast.error(error.response?.data?.message);

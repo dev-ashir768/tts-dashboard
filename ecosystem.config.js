@@ -9,7 +9,8 @@ module.exports = {
       interpreter: "none",
       env: {
         NODE_ENV: "production",
-        PORT: 3000
+        PORT: 3000,
+        HOSTNAME: "0.0.0.0"
       },
       out_file: "./logs/out.log",
       error_file: "./logs/error.log",

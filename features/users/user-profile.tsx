@@ -57,10 +57,10 @@ const UserProfile = () => {
               <AvatarImage
                 src={"/images/avatars/user-avatar.png"}
                 className="object-cover"
-                alt={user?.full_name.slice(0, 2)}
+                alt={user?.full_name?.slice(0, 2)}
               />
               <AvatarFallback className="rounded-lg">
-                {user?.full_name.slice(0, 2)}
+                {user?.full_name?.slice(0, 2)}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">

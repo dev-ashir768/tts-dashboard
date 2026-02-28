@@ -16,5 +16,5 @@ export interface User {
 export interface LoginResponse {
   status: number;
   message: string;
-  payload: User;
+  payload: User[];
 }

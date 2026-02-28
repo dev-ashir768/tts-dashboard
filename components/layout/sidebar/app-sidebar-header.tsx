@@ -6,6 +6,7 @@ import {
 import { Blocks } from "lucide-react";
 
 const AppSidebarHeader = () => {
+
   return (
     <>
       {/* <SidebarMenu className="h-full">
@@ -43,14 +44,14 @@ const AppSidebarHeader = () => {
         <SidebarMenuItem>
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-transparent hover:text-foreground active:bg-transparent active:text-foreground p-0"
           >
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+            <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
               <Blocks className="size-4" />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">TTS Dashboard</span>
-              <span className="truncate text-xs">Admin</span>
+              <span className="truncate text-xs">Tpl Management System</span>
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
