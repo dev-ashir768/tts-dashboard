@@ -5,14 +5,22 @@ const forbiddenCodeRegex =
 
 export const loginSchema = z.object({
   email: z
-    .email({ error: "Invalid email address" })
+    .email({
+      error: (issue) =>
+        issue.input === "" ? "Email is required" : "Invalid email address",
+    })
     .trim()
     .refine((val) => !forbiddenCodeRegex.test(val), {
       error: "Invalid input: Code-like content is not allowed",
     }),
   password: z
     .string()
-    .min(6, { error: "Password must be at least 6 characters long" })
+    .min(6, {
+      error: (issue) =>
+        issue.input === ""
+          ? "Password is required"
+          : "Password must be at least 6 characters long",
+    })
     .trim()
     .refine((val) => !forbiddenCodeRegex.test(val), {
       error: "Invalid input: Code-like content is not allowed",

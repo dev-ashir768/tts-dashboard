@@ -1,9 +1,9 @@
-import AuthWizard from '@/features/auth/auth-wizard';
+import AuthWrapper from '@/features/auth/auth-wrapper';
 
 const page = () => {
   return (
     <>
-      <AuthWizard />
+      <AuthWrapper />
     </>
   );
 };
