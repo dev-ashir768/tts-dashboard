@@ -1,10 +1,18 @@
 "use client";
 
-import { PROTECTED_ROUTES } from "@/lib/constants";
-import { SigninFormValues, SignupFormValues } from "@/schema/auth.schema";
+import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "@/lib/constants";
+import {
+  SigninFormValues,
+  SignupFormValues,
+  VerifyOTPFormValues,
+} from "@/schema/auth.schema";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
-import { SigninResponse, SignupResponse } from "@/types/auth.types";
+import {
+  SigninResponse,
+  SignupResponse,
+  VerifyOTPResponse,
+} from "@/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -42,6 +50,8 @@ export const useAuthMutation = {
   },
 
   SignupMutation: () => {
+    const router = useRouter();
+
     return useMutation<
       SignupResponse,
       AxiosError<SignupResponse>,
@@ -52,7 +62,30 @@ export const useAuthMutation = {
         return response.data;
       },
       onSuccess: (response) => {
-        // router.push(PROTECTED_ROUTES.DASHBOARD.HOME);
+        router.push(PUBLIC_ROUTES.AUTH.VERIFY_OTP);
+        toast.success(response.message);
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message);
+        console.error("Signup Error:", error);
+      },
+    });
+  },
+
+  VerifyOTPMutation: () => {
+    const router = useRouter();
+
+    return useMutation<
+      VerifyOTPResponse,
+      AxiosError<VerifyOTPResponse>,
+      VerifyOTPFormValues
+    >({
+      mutationFn: async (data: VerifyOTPFormValues) => {
+        const response = await authService.verifyOTP(data);
+        return response.data;
+      },
+      onSuccess: (response) => {
+        router.push(PROTECTED_ROUTES.DASHBOARD.HOME);
         toast.success(response.message);
       },
       onError: (error) => {

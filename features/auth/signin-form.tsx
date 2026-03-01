@@ -8,7 +8,7 @@ import { SigninFormValues, signinSchema } from "@/schema/auth.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useAuthMutation } from "@/hooks/mutations/auth.mutation";
+import { useAuthMutation } from "@/hooks/mutations/auth.mutations";
 
 const SigninForm = () => {
   // ====================== Hooks ====================== \\
@@ -42,7 +42,7 @@ const SigninForm = () => {
     <>
       <form
         id="signin-form"
-        className="flex flex-col gap-5"
+        className="flex flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <FieldGroup className="gap-2">
@@ -65,6 +65,7 @@ const SigninForm = () => {
               placeholder="Password"
               autoComplete="off"
               type={isVisible ? "text" : "password"}
+              className="pr-10"
             />
             <Button
               type="button"

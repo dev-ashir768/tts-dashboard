@@ -14,9 +14,10 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { ChevronsUpDown, Key, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import ChangePassword from "./change-password";
+import ChangePassword from "./change-password-dialog";
 import { useAuthStore } from "@/store/auth.store";
 import { PUBLIC_ROUTES } from "@/lib/constants";
+import UserProfileDialog from "./user-profile-dialog";
 
 const UserProfile = () => {
   // ============ Hooks ============ \\
@@ -24,6 +25,7 @@ const UserProfile = () => {
   const { isMobile } = useSidebar();
   const [isHydrated, setIsHydrated] = React.useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = React.useState(false);
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = React.useState(false);
 
   const handleLogout = () => {
     logout();
@@ -80,11 +82,12 @@ const UserProfile = () => {
           sideOffset={4}
         >
           <DropdownMenuGroup>
-            <DropdownMenuItem className="cursor-pointer" asChild>
-              <Link href="/">
-                <User />
-                User Profile
-              </Link>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => setIsProfileDialogOpen(true)}
+            >
+              <User />
+              User Profile
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
@@ -106,6 +109,11 @@ const UserProfile = () => {
       <ChangePassword
         open={isPasswordDialogOpen}
         onOpenChange={setIsPasswordDialogOpen}
+      />
+
+      <UserProfileDialog
+        open={isProfileDialogOpen}
+        onOpenChange={setIsProfileDialogOpen}
       />
     </>
   );

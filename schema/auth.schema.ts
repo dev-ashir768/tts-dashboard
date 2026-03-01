@@ -75,7 +75,7 @@ export const signupSchema = z.object({
     }),
 });
 
-export const otpSchema = z.object({
+export const verifyOTPschema = z.object({
   otp: z
     .string()
     .length(6, "OTP must be exactly 6 digits")
@@ -84,16 +84,8 @@ export const otpSchema = z.object({
     .refine((val) => !forbiddenCodeRegex.test(val), {
       message: "Invalid input: Code-like content is not allowed",
     })
-    .transform((val) => Number(val)),
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .trim()
-    .refine((val) => !forbiddenCodeRegex.test(val), {
-      message: "Invalid input: Code-like content is not allowed",
-    }),
 });
 
 export type SigninFormValues = z.infer<typeof signinSchema>;
-export type OtpFormValues = z.input<typeof otpSchema>;
 export type SignupFormValues = z.infer<typeof signupSchema>;
+export type VerifyOTPFormValues = z.infer<typeof verifyOTPschema>;

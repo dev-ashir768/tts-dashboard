@@ -19,8 +19,13 @@ export interface SigninResponse {
   payload: User[];
 }
 
-
 export interface SignupResponse {
+  status: number;
+  message: string;
+  payload: User[];
+}
+
+export interface VerifyOTPResponse {
   status: number;
   message: string;
   payload: User[];

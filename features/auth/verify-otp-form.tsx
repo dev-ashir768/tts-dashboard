@@ -1,129 +1,87 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { SignupFormValues, signupSchema } from "@/schema/auth.schema";
-import { useForm } from "react-hook-form";
+import { VerifyOTPFormValues, verifyOTPschema } from "@/schema/auth.schema";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import { useAuthMutation } from "@/hooks/mutations/auth.mutation";
+import { useAuthMutation } from "@/hooks/mutations/auth.mutations";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 
-const SignupForm = () => {
+const VerifyOtpForm = () => {
   // ====================== Hooks ====================== \\
-  const [isVisible, setIsVisible] = React.useState(false);
-
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
+    reset,
+  } = useForm<VerifyOTPFormValues>({
+    resolver: zodResolver(verifyOTPschema),
     defaultValues: {
-      password: "",
-      email: "",
-      contact_no: "",
-      full_name: "",
+      otp: "",
     },
   });
 
-  const handleTogglePassword = useCallback(() => {
-    setIsVisible((prev) => !prev);
-  }, []);
-
   // ====================== Mutations ====================== \\
-  const signupMutation = useAuthMutation.SignupMutation();
+  const verifyOtpMutation = useAuthMutation.VerifyOTPMutation();
 
   // ====================== Form Submission ====================== \\
-  const onSubmit = (data: SignupFormValues) => {
-    signupMutation.mutate(data);
+  const onSubmit = (data: VerifyOTPFormValues) => {
+    verifyOtpMutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+    });
   };
 
   return (
     <>
       <form
         id="signup-form"
-        className="flex flex-col gap-5"
+        className="flex flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <FieldGroup className="gap-2">
-          <Field>
-            <Input
-              {...register("full_name")}
-              placeholder="Full Name"
-              autoComplete="off"
-              type="text"
-            />
-          </Field>
+          <Controller
+            name="otp"
+            control={control}
+            render={({ field }) => {
+              return (
+                <Field>
+                  <InputOTP
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    onComplete={() => handleSubmit(onSubmit)()}
+                    maxLength={6}
+                    pattern={REGEXP_ONLY_DIGITS}
+                    disabled={
+                      verifyOtpMutation.isPending || verifyOtpMutation.isSuccess
+                    }
+                    id="otp"
+                  >
+                    <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border mx-auto">
+                      {[0, 1, 2, 3, 4, 5].map((i) => (
+                        <InputOTPSlot key={i} index={i} />
+                      ))}
+                    </InputOTPGroup>
+                  </InputOTP>
+                </Field>
+              );
+            }}
+          />
 
-          {errors.full_name && <FieldError errors={[errors.full_name]} />}
-        </FieldGroup>
-
-        <FieldGroup className="gap-2">
-          <Field>
-            <Input
-              {...register("contact_no")}
-              placeholder="Contact Number"
-              autoComplete="off"
-              type="text"
-            />
-          </Field>
-
-          {errors.contact_no && <FieldError errors={[errors.contact_no]} />}
-        </FieldGroup>
-
-        <FieldGroup className="gap-2">
-          <Field>
-            <Input
-              {...register("email")}
-              placeholder="Email"
-              autoComplete="off"
-              type="text"
-            />
-          </Field>
-
-          {errors.email && <FieldError errors={[errors.email]} />}
-        </FieldGroup>
-
-        <FieldGroup className="gap-2">
-          <Field className="relative">
-            <Input
-              {...register("password")}
-              placeholder="Password"
-              autoComplete="off"
-              type={isVisible ? "text" : "password"}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleTogglePassword}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-max!"
-            >
-              {isVisible ? <EyeOff /> : <Eye />}
-            </Button>
-          </Field>
-
-          {errors.password?.message && (
-            <FieldError errors={[errors.password]} />
+          {errors.otp?.message && (
+            <FieldError errors={[errors.otp]} className="text-center" />
           )}
         </FieldGroup>
-
-        <Field>
-          <Button
-            type="submit"
-            form="signup-form"
-            size="lg"
-            className="w-full"
-            disabled={signupMutation.isPending}
-          >
-            {signupMutation.isPending ? "Signing up..." : "Sign up"}
-          </Button>
-        </Field>
       </form>
     </>
   );
 };
 
-export default SignupForm;
+export default VerifyOtpForm;
