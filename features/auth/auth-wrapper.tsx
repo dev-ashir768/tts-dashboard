@@ -1,9 +1,18 @@
 "use client";
 
 import { Blocks } from "lucide-react";
-import SigninForm from "./signin-form";
 
-const AuthWrapper = () => {
+interface AuthWrapperProps {
+  children: React.ReactNode;
+  title: string;
+  description?: string;
+}
+
+const AuthWrapper: React.FC<AuthWrapperProps> = ({
+  children,
+  title,
+  description,
+}) => {
   return (
     <>
       <div className="grid min-h-svh lg:grid-cols-5">
@@ -74,14 +83,14 @@ const AuthWrapper = () => {
               <div className="bg-primary text-primary-foreground flex aspect-square size-10 items-center justify-center rounded-lg">
                 <Blocks className="size-5" />
               </div>
-              <h1 className="text-center text-4xl font-bold">
-                Signin to your account
-              </h1>
-              <p className="text-center text-base text-muted-foreground">
-                Welcome to the TTS Dashboard
-              </p>
+              <h1 className="text-center text-4xl font-bold">{title}</h1>
+              {description && (
+                <p className="text-center text-base text-muted-foreground">
+                  {description}
+                </p>
+              )}
             </div>
-            <SigninForm />
+            {children}
           </div>
         </div>
       </div>

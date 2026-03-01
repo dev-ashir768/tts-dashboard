@@ -1,4 +1,5 @@
 import AuthWrapper from "@/features/auth/auth-wrapper";
+import SigninForm from "@/features/auth/signin-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +9,12 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <>
-      <AuthWrapper />
+      <AuthWrapper
+        title="Verify OTP"
+        description="Please enter the OTP sent to your email address"
+      >
+        <SigninForm />
+      </AuthWrapper>
     </>
   );
 };

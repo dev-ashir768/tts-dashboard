@@ -1,4 +1,5 @@
 import AuthWrapper from "@/features/auth/auth-wrapper";
+import SignupForm from "@/features/auth/signup-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <>
-      <AuthWrapper />
+      <AuthWrapper title="Sign up" description="Welcome to the TTS Dashboard">
+        <SignupForm />
+      </AuthWrapper>
     </>
   );
 };
