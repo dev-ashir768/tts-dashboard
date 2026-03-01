@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
       if (typeof window !== "undefined") {
         Cookies.remove(STORAGE_KEYS.ACCESS_TOKEN);
 
-        window.location.href = PUBLIC_ROUTES.AUTH.LOGIN;
+        window.location.href = PUBLIC_ROUTES.AUTH.SIGNIN;
       }
     }
 

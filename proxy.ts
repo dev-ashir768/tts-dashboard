@@ -9,8 +9,8 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get(STORAGE_KEYS.ACCESS_TOKEN)?.value;
 
   if (!isPublicRoute && !token) {
-    const loginUrl = new URL(PUBLIC_ROUTES.AUTH.LOGIN, request.url);
-    return NextResponse.redirect(loginUrl);
+    const signinUrl = new URL(PUBLIC_ROUTES.AUTH.SIGNIN, request.url);
+    return NextResponse.redirect(signinUrl);
   }
 
   if (isPublicRoute && token) {

@@ -1,27 +1,27 @@
 "use client";
 
 import { PROTECTED_ROUTES } from "@/lib/constants";
-import { LoginFormValues } from "@/schema/auth.schema";
+import { SigninFormValues, SignupFormValues } from "@/schema/auth.schema";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
-import { LoginResponse } from "@/types/auth.types";
+import { SigninResponse, SignupResponse } from "@/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const useAuthMutation = {
-  LoginMutation: () => {
+  SigninMutation: () => {
     const router = useRouter();
-    const { login: setGlobalUser } = useAuthStore();
+    const { signin: setGlobalUser } = useAuthStore();
 
     return useMutation<
-      LoginResponse,
-      AxiosError<LoginResponse>,
-      LoginFormValues
+      SigninResponse,
+      AxiosError<SigninResponse>,
+      SigninFormValues
     >({
-      mutationFn: async (data: LoginFormValues) => {
-        const response = await authService.login(data);
+      mutationFn: async (data: SigninFormValues) => {
+        const response = await authService.signin(data);
         return response.data;
       },
       onSuccess: (response) => {
@@ -33,11 +33,31 @@ export const useAuthMutation = {
         setGlobalUser(userData[0]);
         router.push(PROTECTED_ROUTES.DASHBOARD.HOME);
         toast.success(`Welcome Back, ${userData[0].full_name?.toUpperCase()}`);
-        console.log(userData);
       },
       onError: (error) => {
         toast.error(error.response?.data?.message);
-        console.error("Login Error:", error);
+        console.error("Signin Error:", error);
+      },
+    });
+  },
+
+  SignupMutation: () => {
+    return useMutation<
+      SignupResponse,
+      AxiosError<SignupResponse>,
+      SignupFormValues
+    >({
+      mutationFn: async (data: SignupFormValues) => {
+        const response = await authService.signup(data);
+        return response.data;
+      },
+      onSuccess: (response) => {
+        // router.push(PROTECTED_ROUTES.DASHBOARD.HOME);
+        toast.success(response.message);
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message);
+        console.error("Signup Error:", error);
       },
     });
   },

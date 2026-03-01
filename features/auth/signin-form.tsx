@@ -4,13 +4,13 @@ import React, { useCallback } from "react";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoginFormValues, loginSchema } from "@/schema/auth.schema";
+import { SigninFormValues, signinSchema } from "@/schema/auth.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthMutation } from "@/hooks/mutations/auth.mutation";
 
-const LoginForm = () => {
+const SigninForm = () => {
   // ====================== Hooks ====================== \\
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -18,8 +18,8 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SigninFormValues>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       password: "",
       email: "",
@@ -31,17 +31,17 @@ const LoginForm = () => {
   }, []);
 
   // ====================== Mutations ====================== \\
-  const loginMutation = useAuthMutation.LoginMutation();
+  const signinMutation = useAuthMutation.SigninMutation();
 
   // ====================== Form Submission ====================== \\
-  const onSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
+  const onSubmit = (data: SigninFormValues) => {
+    signinMutation.mutate(data);
   };
 
   return (
     <>
       <form
-        id="login-form"
+        id="signin-form"
         className="flex flex-col gap-5"
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -85,12 +85,12 @@ const LoginForm = () => {
         <Field>
           <Button
             type="submit"
-            form="login-form"
+            form="signin-form"
             size="lg"
             className="w-full"
-            disabled={loginMutation.isPending}
+            disabled={signinMutation.isPending}
           >
-            {loginMutation.isPending ? "Logging in..." : "Login"}
+            {signinMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>
         </Field>
       </form>
@@ -98,4 +98,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default SigninForm;

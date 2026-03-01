@@ -6,7 +6,7 @@ import { STORAGE_KEYS } from "@/lib/constants";
 
 interface AuthState {
   user: User | null;
-  login: (userData: User) => void;
+  signin: (userData: User) => void;
   logout: () => void;
 }
 
@@ -15,7 +15,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
 
-      login: (userData) => {
+      signin: (userData) => {
         set({
           user: userData,
         });

@@ -1,7 +1,7 @@
 "use client";
 
-import LoginForm from "./login-form";
 import { Blocks } from "lucide-react";
+import SigninForm from "./signin-form";
 
 const AuthWrapper = () => {
   return (
@@ -31,7 +31,7 @@ const AuthWrapper = () => {
               <path
                 d="M64.3266 103.152L64.3266 78.6106C64.3266 70.5416 70.8678 64.0003 78.9368 64.0003L102.796 64.0004"
                 stroke="currentColor"
-                stroke-width="8.11681"
+                strokeWidth="8.11681"
               ></path>
               <line
                 x1="93.3468"
@@ -39,7 +39,7 @@ const AuthWrapper = () => {
                 x2="76.555"
                 y2="52.205"
                 stroke="currentColor"
-                stroke-width="8.11681"
+                strokeWidth="8.11681"
               ></line>
               <line
                 x1="51.7697"
@@ -47,7 +47,7 @@ const AuthWrapper = () => {
                 x2="34.9778"
                 y2="93.6567"
                 stroke="currentColor"
-                stroke-width="8.11681"
+                strokeWidth="8.11681"
               ></line>
               <line
                 x1="50.9584"
@@ -55,7 +55,7 @@ const AuthWrapper = () => {
                 x2="34.2651"
                 y2="34.6256"
                 stroke="currentColor"
-                stroke-width="8.11681"
+                strokeWidth="8.11681"
               ></line>
               <line
                 x1="93.1625"
@@ -63,7 +63,7 @@ const AuthWrapper = () => {
                 x2="76.4692"
                 y2="76.9464"
                 stroke="currentColor"
-                stroke-width="8.11681"
+                strokeWidth="8.11681"
               ></line>
             </svg>
           </div>
@@ -75,13 +75,13 @@ const AuthWrapper = () => {
                 <Blocks className="size-5" />
               </div>
               <h1 className="text-center text-4xl font-bold">
-                Login to your account
+                Signin to your account
               </h1>
               <p className="text-center text-base text-muted-foreground">
                 Welcome to the TTS Dashboard
               </p>
             </div>
-            <LoginForm />
+            <SigninForm />
           </div>
         </div>
       </div>

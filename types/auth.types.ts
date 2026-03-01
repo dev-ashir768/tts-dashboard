@@ -13,7 +13,14 @@ export interface User {
   is_deleted: number;
 }
 
-export interface LoginResponse {
+export interface SigninResponse {
+  status: number;
+  message: string;
+  payload: User[];
+}
+
+
+export interface SignupResponse {
   status: number;
   message: string;
   payload: User[];

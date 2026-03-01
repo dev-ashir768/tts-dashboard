@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import ChangePassword from "./change-password";
 import { useAuthStore } from "@/store/auth.store";
+import { PUBLIC_ROUTES } from "@/lib/constants";
 
 const UserProfile = () => {
   // ============ Hooks ============ \\
@@ -93,7 +94,7 @@ const UserProfile = () => {
               Change Password
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" asChild>
-              <Link href="/login" onClick={handleLogout}>
+              <Link href={PUBLIC_ROUTES.AUTH.SIGNIN} onClick={handleLogout}>
                 <LogOut />
                 Logout
               </Link>

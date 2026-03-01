@@ -1,12 +1,20 @@
 import apiClient from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
-import { LoginFormValues } from "@/schema/auth.schema";
-import { LoginResponse } from "@/types/auth.types";
+import { SigninFormValues, SignupFormValues } from "@/schema/auth.schema";
+import { SigninResponse, SignupResponse } from "@/types/auth.types";
 
 export const authService = {
-  login: async (data: LoginFormValues) => {
-    const response = await apiClient.post<LoginResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
+  signin: async (data: SigninFormValues) => {
+    const response = await apiClient.post<SigninResponse>(
+      API_ENDPOINTS.AUTH.SIGNIN,
+      data,
+    );
+    return response;
+  },
+
+  signup: async (data: SignupFormValues) => {
+    const response = await apiClient.post<SignupResponse>(
+      API_ENDPOINTS.AUTH.SIGNUP,
       data,
     );
     return response;

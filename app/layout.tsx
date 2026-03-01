@@ -16,8 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TTS Dashboard",
+  title: {
+    template: "%s | TTS Dashboard",
+    default: "TTS Dashboard",
+  },
   description: "TTS Dashboard",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
 };
 
 export default function RootLayout({

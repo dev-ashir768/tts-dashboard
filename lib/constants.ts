@@ -1,11 +1,9 @@
 export const PUBLIC_ROUTES = {
   AUTH: {
-    LOGIN: "/login",
+    SIGNIN: "/signin",
+    SIGNUP: "/signup",
+    VERIFY_OTP: "/signup/verify-otp",
     FORGOT_PASSWORD: "/forgot-password",
-  },
-  PMS: {
-    DASHBOARD: "/login",
-    ORDERS: "/forgot-password",
   },
 } as const;
 
@@ -17,8 +15,9 @@ export const STORAGE_KEYS = {
 
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: "/auth/login",
-    VERIFY_OTP: "/api/auth/verify-otp",
+    SIGNIN: "/auth/login",
+    SIGNUP: "/auth/register",
+    VERIFY_OTP: "/auth/otp",
   },
   USER: {
     CHANGE_PASSWORD: "/auth/change-password",
