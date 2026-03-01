@@ -38,6 +38,7 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   const data = {
     user_id: user ? user.id : null,
     acno: user ? user.acno : null,
+    isFetch: open,
   };
 
   const {

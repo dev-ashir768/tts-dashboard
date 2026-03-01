@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 interface UserByIdQueryProps {
   user_id: number | null;
   acno: string | null;
+  isFetch: boolean;
 }
 
 export const useUserQuery = {
@@ -14,9 +15,10 @@ export const useUserQuery = {
         QUERY_KEYS.USER.USER_BY_ID,
         ...(data.acno ? [data.acno] : []),
         ...(data.user_id ? [data.user_id] : []),
+        ...(data.isFetch ? [data.isFetch] : []),
       ],
       queryFn: () => userService.userById(data),
-      enabled: !!data.user_id && !!data.acno,
+      enabled: !!data.user_id && !!data.acno && !!data.isFetch,
     });
   },
 };

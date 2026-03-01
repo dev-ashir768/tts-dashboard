@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SignupFormValues, signupSchema } from "@/schema/auth.schema";
@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthMutation } from "@/hooks/mutations/auth.mutations";
+import Link from "next/link";
 
 const SignupForm = () => {
   // ====================== Hooks ====================== \\
@@ -121,6 +122,9 @@ const SignupForm = () => {
           >
             {signupMutation.isPending ? "Signing up..." : "Sign up"}
           </Button>
+          <FieldDescription className="text-center">
+            Already have an account? <Link href="/signin">Sign in</Link>
+          </FieldDescription>
         </Field>
       </form>
     </>

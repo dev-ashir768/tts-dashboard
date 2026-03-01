@@ -24,11 +24,17 @@ export const API_ENDPOINTS = {
     USER_PROFILE: "/profile/update",
     USER_BY_ID: "/profile/index",
   },
+  CUSTOMER: {
+    CUSTOMER_LIST: "/customers/list",
+  },
 } as const;
 
 export const QUERY_KEYS = {
   USER: {
     USER_BY_ID: "user-by-id",
+  },
+  CUSTOMER: {
+    CUSTOMER_LIST: "customer-list",
   },
 } as const;
 
