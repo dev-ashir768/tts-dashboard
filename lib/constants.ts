@@ -44,3 +44,7 @@ export const PROTECTED_ROUTES = {
     ORDERS: "/orders",
   },
 } as const;
+
+export const DEFAULT_VALUES = {
+  NOT_AVAILABLE: 'N/A',
+} as const;

@@ -15,7 +15,7 @@ export const useCustomerQuery = {
         ...(data.acno ? [data.acno] : []),
         ...(data.user_id ? [data.user_id] : []),
       ],
-      queryFn: () => customerService.customerList(),
+      queryFn: () => customerService.customerList(data),
       enabled: !!data.user_id && !!data.acno,
     });
   },

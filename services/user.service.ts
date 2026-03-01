@@ -60,9 +60,9 @@ export const userService = {
       acno,
     };
 
-    const response = await apiClient.get<UserByIdResponse>(
+    const response = await apiClient.post<UserByIdResponse>(
       API_ENDPOINTS.USER.USER_BY_ID,
-      { data: payload },
+      payload,
     );
     return response.data;
   },

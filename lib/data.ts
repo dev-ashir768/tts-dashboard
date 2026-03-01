@@ -21,14 +21,14 @@ export const menusData = [
     children: [
       {
         menu_id: 21,
-        menu_name: "All Users",
-        url: "/admin/users/all",
+        menu_name: "Staff",
+        url: "/admin/staff",
         type: "admin",
       },
       {
         menu_id: 22,
-        menu_name: "Roles & Permissions",
-        url: "/admin/users/permissions",
+        menu_name: "Customer",
+        url: "/admin/customer",
         type: "admin",
       }
     ],
