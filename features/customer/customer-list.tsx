@@ -4,17 +4,23 @@ import { DataTable } from "@/components/shared/datatable/datatable";
 import EmptyState from "@/components/shared/empty-state";
 import Header from "@/components/shared/header";
 import TableSkeleton from "@/components/shared/table-skeleton";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCustomerMutation } from "@/hooks/mutations/customer.mutations";
 import { useCustomerQuery } from "@/hooks/queries/customer.queries";
-import { DEFAULT_VALUES } from "@/lib/constants";
+import { DEFAULT_VALUES, QUERY_KEYS } from "@/lib/constants";
+import { customerStatusUpdateProps } from "@/services/customer.service";
 import { useAuthStore } from "@/store/auth.store";
 import { CustomerListType } from "@/types/customer.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 const CustomerList = () => {
   // ====================== Hooks ====================== \\
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
   const data = {
     user_id: user ? user.id : null,
     acno: user ? user.acno : null,
@@ -25,6 +31,33 @@ const CustomerList = () => {
     isLoading: customerListLoading,
     isError: customerListError,
   } = useCustomerQuery.CustomerListQuery(data);
+
+  //=========== Mutations =========//
+  const customerStatusUpdateMutation =
+    useCustomerMutation.CustomerStatusUpdateMutation();
+
+  //=========== Handlers =========//
+  const handleCustomerStatusUpdate = useCallback(
+    (data: customerStatusUpdateProps) => {
+      const promise = customerStatusUpdateMutation.mutateAsync(data, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [
+              QUERY_KEYS.CUSTOMER.CUSTOMER_LIST,
+              ...(user?.acno ? [user.acno] : []),
+              ...(user?.id ? [user.id] : []),
+            ],
+          });
+        },
+      });
+
+      toast.promise(promise, {
+        loading: "Updating customer status...",
+        error: "Failed to update customer status!",
+      });
+    },
+    [user, queryClient, customerStatusUpdateMutation],
+  );
 
   //=========== Columns =========//
   const columns: ColumnDef<CustomerListType>[] = [
@@ -78,17 +111,30 @@ const CustomerList = () => {
       header: "Status",
       cell: ({ row }) => {
         const isActive = row.original.status;
+        const customerId = row.original.id;
+        const acno = row.original.acno;
         return (
-          <Badge
+          <Button
             variant={
               isActive
                 ? "active"
-                : ("inactive" as React.ComponentProps<typeof Badge>["variant"])
+                : ("inactive" as React.ComponentProps<typeof Button>["variant"])
             }
             size="badge-lg"
+            disabled={
+              customerStatusUpdateMutation.isPending &&
+              customerStatusUpdateMutation.variables?.user_id === customerId
+            }
+            onClick={() =>
+              handleCustomerStatusUpdate({
+                user_id: customerId,
+                acno: acno,
+                status: isActive ? 0 : 1,
+              })
+            }
           >
             {isActive ? "Active" : "Inactive"}
-          </Badge>
+          </Button>
         );
       },
     },

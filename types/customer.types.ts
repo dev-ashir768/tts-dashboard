@@ -14,3 +14,9 @@ export interface CustomerListResponse {
   message: string;
   payload: CustomerListType[];
 }
+
+export interface CustomerStatusUpdateResponse {
+  status: number;
+  message: string;
+  payload: [];
+}

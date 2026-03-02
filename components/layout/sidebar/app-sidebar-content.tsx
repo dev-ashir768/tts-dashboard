@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Icons from "lucide-react";
 import {
   Collapsible,
@@ -23,6 +23,17 @@ import { menusData } from "@/lib/data";
 
 const AppSidebarContent = () => {
   const pathname = usePathname();
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
+
+  useEffect(() => {
+    const activeParent = menusData.find((item) =>
+      item.children?.some((child) => child.url === pathname),
+    );
+    if (activeParent) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpenPanel(activeParent.url);
+    }
+  }, [pathname]);
 
   return (
     <>
@@ -34,33 +45,42 @@ const AppSidebarContent = () => {
               : null;
             const hasChildren =
               item.children?.length && item.children.length > 0;
-            const activeSubMenu =
-              item.url === pathname || pathname.includes(item.url);
-            const activeMenu = item.url === pathname;
+
+            const isParentOfActiveChild = item.children?.some(
+              (child) => child.url === pathname,
+            );
+            const activeMenu = item.url === pathname || isParentOfActiveChild;
+
+            const panelIsOpen = openPanel === item.url;
 
             return hasChildren ? (
               <Collapsible
                 key={item.menu_id}
                 className="group/collapsible"
+                open={panelIsOpen}
+                onOpenChange={(open) => {
+                  setOpenPanel(open ? item.url : null);
+                }}
                 asChild
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={item.menu_name}
-                      className="cursor-pointer"
-                      isActive={activeSubMenu}
+                      className="cursor-pointer transition-all duration-300 ease-in-out"
+                      isActive={activeMenu}
                     >
                       {Icon && <Icon />}
                       <span>{item.menu_name}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
+                  <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                     <SidebarMenuSub>
                       {item.children?.map((child) => (
                         <SidebarMenuSubItem key={child.menu_name}>
                           <SidebarMenuSubButton
+                            className="transition-colors duration-200"
                             asChild
                             isActive={child.url === pathname}
                           >
@@ -76,7 +96,12 @@ const AppSidebarContent = () => {
               </Collapsible>
             ) : (
               <SidebarMenuItem key={item.menu_id}>
-                <SidebarMenuButton asChild isActive={activeMenu}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={activeMenu}
+                  onClick={() => setOpenPanel(null)}
+                  className="transition-colors duration-200"
+                >
                   <Link href={item.url}>
                     {Icon && <Icon />}
                     <span>{item.menu_name}</span>

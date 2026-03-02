@@ -25,9 +25,11 @@ export const API_ENDPOINTS = {
   },
   CUSTOMER: {
     CUSTOMER_LIST: "/customers/list",
+    CUSTOMER_STATUS_UPDATE: "/customers/status",
   },
   STAFF: {
     STAFF_LIST: "/staff/list",
+    STAFF_STATUS_UPDATE: "/staff/status",
   },
 } as const;
 
@@ -46,7 +48,8 @@ export const QUERY_KEYS = {
 export const PROTECTED_ROUTES = {
   DASHBOARD: {
     HOME: "/",
-    ORDERS: "/orders",
+    CUSTOMER: "/customer",
+    STAFF: "/staff",
   },
 } as const;
 

@@ -14,3 +14,9 @@ export interface StaffListResponse {
   message: string;
   payload: StaffListType[];
 }
+
+export interface StaffStatusUpdateResponse {
+  status: number;
+  message: string;
+  payload: [];
+}

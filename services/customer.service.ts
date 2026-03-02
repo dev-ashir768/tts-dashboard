@@ -1,10 +1,16 @@
 import apiClient from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
-import { CustomerListResponse } from "@/types/customer.types";
+import { CustomerListResponse, CustomerStatusUpdateResponse } from "@/types/customer.types";
 
 interface customerListProps {
   user_id: number | null;
   acno: string | null;
+}
+
+export interface customerStatusUpdateProps {
+  user_id: number | null;
+  acno: string | null;
+  status: number;
 }
 
 export const customerService = {
@@ -18,22 +24,13 @@ export const customerService = {
     return response.data;
   },
 
-  //   customerById: async ({
-  //     user_id,
-  //     acno,
-  //   }: {
-  //     user_id: number | null;
-  //     acno: string | null;
-  //   }): Promise<UserByIdResponse> => {
-  //     const payload = {
-  //       user_id,
-  //       acno,
-  //     };
-
-  //     const response = await apiClient.get<UserByIdResponse>(
-  //       API_ENDPOINTS.USER.USER_BY_ID,
-  //       { data: payload },
-  //     );
-  //     return response.data;
-  //   },
+  customerStatusUpdate: async (
+    data: customerStatusUpdateProps,
+  ): Promise<CustomerStatusUpdateResponse> => {
+    const response = await apiClient.post<CustomerStatusUpdateResponse>(
+      API_ENDPOINTS.CUSTOMER.CUSTOMER_STATUS_UPDATE,
+      data,
+    );
+    return response.data;
+  },
 };
