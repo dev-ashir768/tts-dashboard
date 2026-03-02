@@ -1,6 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
-import { PUBLIC_ROUTES, STORAGE_KEYS } from "./constants";
+import { PUBLIC_ROUTES } from "./constants";
+import { useAuthStore } from "@/store/auth.store";
 
 // -----------------------------------------------------------------------------
 // 1. CREATE INSTANCE
@@ -19,7 +19,8 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
-      const token = Cookies.get(STORAGE_KEYS.ACCESS_TOKEN);
+      const { user: globalUser } = useAuthStore.getState();
+      const token = globalUser?.api_key;
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -42,7 +43,8 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        Cookies.remove(STORAGE_KEYS.ACCESS_TOKEN);
+        const { logout: logoutGlobalUser } = useAuthStore.getState();
+        logoutGlobalUser();
 
         window.location.href = PUBLIC_ROUTES.AUTH.SIGNIN;
       }

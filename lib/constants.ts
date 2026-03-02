@@ -8,7 +8,6 @@ export const PUBLIC_ROUTES = {
 } as const;
 
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: "access_token",
   AUTH_STATE: "auth-storage",
   THEME: "ui-theme",
 } as const;
@@ -27,6 +26,9 @@ export const API_ENDPOINTS = {
   CUSTOMER: {
     CUSTOMER_LIST: "/customers/list",
   },
+  STAFF: {
+    STAFF_LIST: "/staff/list",
+  },
 } as const;
 
 export const QUERY_KEYS = {
@@ -35,6 +37,9 @@ export const QUERY_KEYS = {
   },
   CUSTOMER: {
     CUSTOMER_LIST: "customer-list",
+  },
+  STAFF: {
+    STAFF_LIST: "staff-list",
   },
 } as const;
 

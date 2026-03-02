@@ -6,13 +6,13 @@ import Header from "@/components/shared/header";
 import TableSkeleton from "@/components/shared/table-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { useCustomerQuery } from "@/hooks/queries/customer.queries";
 import { DEFAULT_VALUES } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth.store";
-import { CustomerListType } from "@/types/customer.types";
+import { StaffListType } from "@/types/staff.types";
 import { ColumnDef } from "@tanstack/react-table";
+import { useStaffQuery } from "@/hooks/queries/staff.queries";
 
-const CustomerList = () => {
+const StaffList = () => {
   // ====================== Hooks ====================== \\
   const { user } = useAuthStore();
   const data = {
@@ -21,13 +21,13 @@ const CustomerList = () => {
   };
   //========== Data Fetching ==========
   const {
-    data: customerList,
-    isLoading: customerListLoading,
-    isError: customerListError,
-  } = useCustomerQuery.CustomerListQuery(data);
+    data: staffList,
+    isLoading: staffListLoading,
+    isError: staffListError,
+  } = useStaffQuery.StaffListQuery(data);
 
   //=========== Columns =========//
-  const columns: ColumnDef<CustomerListType>[] = [
+  const columns: ColumnDef<StaffListType>[] = [
     {
       accessorKey: "full_name",
       header: "Full Name",
@@ -95,27 +95,27 @@ const CustomerList = () => {
   ];
 
   //=========== Render Holiday List =========//
-  const renderCustomerList = () => {
-    if (customerListLoading) {
+  const renderStaffList = () => {
+    if (staffListLoading) {
       return <TableSkeleton />;
     }
 
-    if (customerListError) {
+    if (staffListError) {
       return (
-        <EmptyState message="Failed to load customer list. Please try again." />
+        <EmptyState message="Failed to load staff list. Please try again." />
       );
     }
 
-    return <DataTable columns={columns} data={customerList?.payload || []} />;
+    return <DataTable columns={columns} data={staffList?.payload || []} />;
   };
   return (
     <>
-      <Header title="Customer List" description="Manage your customers" />
+      <Header title="Staff List" description="Manage your staff" />
       <Card className="shadow-none border-0">
-        <CardContent>{renderCustomerList()}</CardContent>
+        <CardContent>{renderStaffList()}</CardContent>
       </Card>
     </>
   );
 };
 
-export default CustomerList;
+export default StaffList;
