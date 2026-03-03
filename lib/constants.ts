@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
   STAFF: {
     STAFF_LIST: "/staff/list",
     STAFF_STATUS_UPDATE: "/staff/status",
+    CREATE_STAFF: "/staff/create",
   },
 } as const;
 
@@ -55,4 +56,9 @@ export const PROTECTED_ROUTES = {
 
 export const DEFAULT_VALUES = {
   NOT_AVAILABLE: 'N/A',
+} as const;
+
+export const REGEX = {
+  FORBIDDEN_CODE: /(<\?php|<script|function\s*\(|SELECT\s+|INSERT\s+|UPDATE\s+|DELETE\s+|DROP\s+|CREATE\s+|EXEC\s+|system\(|eval\(|require\(|import\s+|export\s+)/i,
+  PHONE: /^(?:(?:\+|00)44|0)7(?:[45789]\d{2}|624)\d{6}$|^(?:\+1|1)?\s?\(?([2-9][0-8][0-9])\)?[-. ]?([2-9][0-9]{2})[-. ]?([0-9]{4})$|^(\+92|92|0|0092)?(3\d{2}|\d{3})?\d{7}$/,
 } as const;

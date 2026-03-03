@@ -16,10 +16,14 @@ import { staffStatusUpdateProps } from "@/services/staff.service";
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import StaffFormDialog from "./staff-form-dialog";
+import React from "react";
 
 const StaffList = () => {
   // ====================== Hooks ====================== \\
   const { user } = useAuthStore();
+  const [isStaffFormDialogOpen, setIsStaffFormDialogOpen] =
+    React.useState(false);
   const queryClient = useQueryClient();
   const data = {
     user_id: user ? user.id : null,
@@ -157,10 +161,20 @@ const StaffList = () => {
 
   return (
     <>
-      <Header title="Staff List" description="Manage your staff" />
+      <Header title="Staff List" description="Manage your staff">
+        <Button size="lg" onClick={() => setIsStaffFormDialogOpen(true)}>
+          Add Staff
+        </Button>
+      </Header>
+
       <Card className="shadow-none border-0">
         <CardContent>{renderStaffList()}</CardContent>
       </Card>
+
+      <StaffFormDialog
+        open={isStaffFormDialogOpen}
+        onOpenChange={setIsStaffFormDialogOpen}
+      />
     </>
   );
 };

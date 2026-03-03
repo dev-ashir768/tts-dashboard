@@ -1,6 +1,7 @@
+// ====================== Staff List ====================== \\
 export interface StaffListType {
-  id: number;
   acno: string;
+  id: number;
   full_name: string;
   email: string;
   contact_no: string;
@@ -15,6 +16,17 @@ export interface StaffListResponse {
   payload: StaffListType[];
 }
 
+// ====================== Create Staff ====================== \\
+export interface CreateStaffResponse {
+  status: number;
+  message: string;
+  payload: {
+    user_id: string;
+    acno: string;
+  };
+}
+
+// ====================== Update Staff Status ====================== \\
 export interface StaffStatusUpdateResponse {
   status: number;
   message: string;

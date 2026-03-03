@@ -1,31 +1,7 @@
-import { z } from "zod";
 import { REGEX } from "@/lib/constants";
+import { z } from "zod";
 
-export const signinSchema = z.object({
-  email: z
-    .email({
-      error: (issue) =>
-        issue.input === "" ? "Email is required" : "Invalid email address",
-    })
-    .trim()
-    .refine((val) => !REGEX.FORBIDDEN_CODE.test(val), {
-      error: "Invalid input: Code-like content is not allowed",
-    }),
-  password: z
-    .string()
-    .min(6, {
-      error: (issue) =>
-        issue.input === ""
-          ? "Password is required"
-          : "Password must be at least 6 characters long",
-    })
-    .trim()
-    .refine((val) => !REGEX.FORBIDDEN_CODE.test(val), {
-      error: "Invalid input: Code-like content is not allowed",
-    }),
-});
-
-export const signupSchema = z.object({
+export const staffSchema = z.object({
   full_name: z
     .string()
     .min(3, {
@@ -71,17 +47,4 @@ export const signupSchema = z.object({
     }),
 });
 
-export const verifyOTPschema = z.object({
-  otp: z
-    .string()
-    .length(6, "OTP must be exactly 6 digits")
-    .regex(/^\d+$/, "OTP must contain only digits")
-    .trim()
-    .refine((val) => !REGEX.FORBIDDEN_CODE.test(val), {
-      message: "Invalid input: Code-like content is not allowed",
-    }),
-});
-
-export type SigninFormValues = z.infer<typeof signinSchema>;
-export type SignupFormValues = z.infer<typeof signupSchema>;
-export type VerifyOTPFormValues = z.infer<typeof verifyOTPschema>;
+export type StaffFormValues = z.infer<typeof staffSchema>;
