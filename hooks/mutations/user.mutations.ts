@@ -1,8 +1,15 @@
 "use client";
 
-import { ChangePasswordFormValues, UserProfileFormValues } from "@/schema/user.schema";
+import {
+  ChangePasswordFormValues,
+  UserProfileFormValues,
+} from "@/schema/user.schema";
 import { userService } from "@/services/user.service";
-import { ChangePasswordResponse, UserProfileResponse } from "@/types/user.types";
+import { ApiErrorResponse } from "@/types/general.types";
+import {
+  ChangePasswordResponse,
+  UserProfileResponse,
+} from "@/types/user.types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -31,7 +38,7 @@ export const useUserMutation = {
   UserProfileMutation: () => {
     return useMutation<
       UserProfileResponse,
-      AxiosError<UserProfileResponse>,
+      AxiosError<ApiErrorResponse>,
       UserProfileFormValues
     >({
       mutationFn: async (data: UserProfileFormValues) => {
@@ -42,7 +49,14 @@ export const useUserMutation = {
         toast.success(response.message);
       },
       onError: (error) => {
-        toast.error(error.response?.data?.message);
+        const errorMessages = error.response?.data?.payload.map(
+          (error) => error.message,
+        );
+        toast.error(
+          errorMessages?.length
+            ? errorMessages.join(", ")
+            : error.response?.data?.message,
+        );
         console.error("User Profile Error:", error);
       },
     });

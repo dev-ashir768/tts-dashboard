@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { REGEX } from "@/lib/constants";
+import { COUNTRY, REGEX } from "@/lib/constants";
 
 export const signinSchema = z.object({
   email: z
@@ -13,11 +13,23 @@ export const signinSchema = z.object({
     }),
   password: z
     .string()
-    .min(6, {
+    .min(8, {
       error: (issue) =>
         issue.input === ""
           ? "Password is required"
           : "Password must be at least 6 characters long",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[0-9]/, {
+      message: "Password must contain at least one number",
+    })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Password must contain at least one special character",
     })
     .trim()
     .refine((val) => !REGEX.FORBIDDEN_CODE.test(val), {
@@ -59,16 +71,32 @@ export const signupSchema = z.object({
     }),
   password: z
     .string()
-    .min(6, {
+    .min(8, {
       error: (issue) =>
         issue.input === ""
           ? "Password is required"
           : "Password must be at least 6 characters long",
     })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[0-9]/, {
+      message: "Password must contain at least one number",
+    })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Password must contain at least one special character",
+    })
     .trim()
     .refine((val) => !REGEX.FORBIDDEN_CODE.test(val), {
       error: "Invalid input: Code-like content is not allowed",
     }),
+  country: z
+    .enum(COUNTRY, { message: "Country is required" })
+    .nullable()
+    .optional(),
 });
 
 export const verifyOTPschema = z.object({

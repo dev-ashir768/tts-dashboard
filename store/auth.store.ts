@@ -11,9 +11,15 @@ interface AuthState {
 }
 
 const cookieStorage: StateStorage = {
-  getItem: (name: string) => Cookies.get(name) ?? null,
-  setItem: (name: string, value: string) =>
-    Cookies.set(name, value, { expires: 1 }),
+  getItem: (name: string) => {
+    const val = Cookies.get(name);
+    if (!val) return null;
+    return atob(val);
+  },
+  setItem: (name: string, value: string) => {
+    const base64Value = btoa(value);
+    Cookies.set(name, base64Value, { expires: 1 });
+  },
   removeItem: (name: string) => Cookies.remove(name),
 };
 

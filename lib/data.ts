@@ -1,3 +1,5 @@
+import { ROLE } from "./constants";
+
 export const menusData = [
   {
     menu_id: 100,
@@ -5,7 +7,7 @@ export const menusData = [
     icon: "LayoutDashboard",
     sorting: 1,
     url: "/",
-    type: "admin",
+    permission: ["admin", "super_admin", "customer", "staff"],
     parent_id: null,
     children: [],
   },
@@ -15,21 +17,28 @@ export const menusData = [
     icon: "Users",
     sorting: 2,
     url: "/users",
-    type: "admin",
+    permission: ["admin", "super_admin"],
     parent_id: null,
     children: [
       {
         menu_id: 201,
-        menu_name: "Staff",
-        url: "/users/staff",
-        type: "admin",
+        menu_name: "Admin",
+        url: "/users/admin",
+        permission: ["super_admin"],
         parent_id: 200,
       },
       {
         menu_id: 202,
+        menu_name: "Staff",
+        url: "/users/staff",
+        permission: ["admin", "super_admin"],
+        parent_id: 200,
+      },
+      {
+        menu_id: 203,
         menu_name: "Customer",
         url: "/users/customer",
-        type: "admin",
+        permission: ["admin", "super_admin"],
         parent_id: 200,
       },
     ],
@@ -40,14 +49,14 @@ export const menusData = [
     icon: "Warehouse",
     sorting: 3,
     url: "/admin/warehouse",
-    type: "admin",
+    permission: ["admin", "super_admin"],
     parent_id: null,
     children: [
       {
         menu_id: 301,
         menu_name: "Location Mapping",
         url: "/admin/warehouse/locations",
-        type: "admin",
+        permission: ["admin", "super_admin"],
         parent_id: 300,
       },
     ],
@@ -58,44 +67,33 @@ export const menusData = [
     icon: "Home",
     sorting: 1,
     url: "/staff/dashboard",
-    type: "staff",
+    permission: [ROLE.ADMIN, ROLE.SUPER_ADMIN, ROLE.CUSTOMER, ROLE.STAFF],
     parent_id: null,
     children: [],
   },
-
   {
     menu_id: 500,
     menu_name: "Order Management",
     icon: "ShoppingCart",
     sorting: 1,
     url: "/customer/orders",
-    type: "customer",
+    permission: [ROLE.CUSTOMER],
     parent_id: null,
     children: [
       {
         menu_id: 501,
         menu_name: "Create New Order",
         url: "/customer/orders/new",
-        type: "customer",
+        permission: [ROLE.CUSTOMER],
         parent_id: 500,
       },
       {
         menu_id: 502,
         menu_name: "Order History",
         url: "/customer/orders/history",
-        type: "customer",
+        permission: [ROLE.CUSTOMER],
         parent_id: 500,
       },
     ],
-  },
-  {
-    menu_id: 600,
-    menu_name: "Settings",
-    icon: "Settings",
-    sorting: 2,
-    url: "/customer/profile",
-    type: "customer",
-    parent_id: null,
-    children: [],
-  },
+  }
 ];

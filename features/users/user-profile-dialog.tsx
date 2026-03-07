@@ -60,6 +60,11 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
 
   // ====================== Data Fetcing ====================== \\
   const { data: userByIdData } = useUserQuery.UserByIdQuery(data);
+  const fullImageUrl = userByIdData?.payload[0].brand_image
+    ? process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL +
+      "/" + `user_${user?.id}/` +
+      userByIdData?.payload[0].brand_image
+    : "";
 
   React.useEffect(() => {
     if (user && open) {
@@ -67,12 +72,13 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
         full_name: userByIdData?.payload[0].full_name,
         business_name: userByIdData?.payload[0].business_name,
         address: userByIdData?.payload[0].address,
-        brand_image: userByIdData?.payload[0].brand_image,
+        brand_image: fullImageUrl,
       });
     } else if (!open) {
       reset();
     }
-  }, [user, open, reset, userByIdData?.payload]);
+  }, [user, open, reset, userByIdData?.payload, fullImageUrl]);
+
 
   // ====================== Mutations ====================== \\
   const userProfileMutation = useUserMutation.UserProfileMutation();
@@ -157,12 +163,13 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
                       {field.value ? (
                         <div className="flex flex-col items-center gap-1">
                           {field.value.startsWith("data:image") ||
-                          field.value.startsWith("http") ? (
+                          field.value.startsWith("http") ||
+                          field.value.startsWith("https") ? (
                             <div className="relative flex items-center gap-2.5 rounded-md border p-0">
                               <div className="relative flex size-20 shrink-0 items-center justify-center rounded border bg-accent/50 p-1">
                                 <Image
                                   src={field.value}
-                                  alt="Brand Image"
+                                  alt={field.value}
                                   fill
                                   className="size-full object-contain"
                                 />

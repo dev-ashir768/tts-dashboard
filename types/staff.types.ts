@@ -1,12 +1,13 @@
+import { COUNTRY } from "@/lib/constants";
+
 // ====================== Staff List ====================== \\
 export interface StaffListType {
-  acno: string;
   id: number;
+  acno: string;
   full_name: string;
   email: string;
   contact_no: string;
-  business_name: null;
-  address: null;
+  country: (typeof COUNTRY)[keyof typeof COUNTRY];
   status: number;
 }
 

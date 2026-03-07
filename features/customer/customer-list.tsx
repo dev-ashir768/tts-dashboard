@@ -62,6 +62,15 @@ const CustomerList = () => {
   //=========== Columns =========//
   const columns: ColumnDef<CustomerListType>[] = [
     {
+      accessorKey: "acno",
+      header: "Account Number",
+      filterFn: "arrIncludesSome",
+      cell: ({ row }) => {
+        const fullName = row.original.acno;
+        return fullName || DEFAULT_VALUES.NOT_AVAILABLE;
+      },
+    },
+    {
       accessorKey: "full_name",
       header: "Full Name",
       filterFn: "arrIncludesSome",
@@ -77,6 +86,15 @@ const CustomerList = () => {
       cell: ({ row }) => {
         const email = row.original.email;
         return email || DEFAULT_VALUES.NOT_AVAILABLE;
+      },
+    },
+    {
+      accessorKey: "country",
+      header: "Country",
+      filterFn: "arrIncludesSome",
+      cell: ({ row }) => {
+        const fullName = row.original.country;
+        return fullName || DEFAULT_VALUES.NOT_AVAILABLE;
       },
     },
     {
@@ -97,15 +115,15 @@ const CustomerList = () => {
         return businessName || DEFAULT_VALUES.NOT_AVAILABLE;
       },
     },
-    {
-      accessorKey: "address",
-      header: "Address",
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const address = row.original.address;
-        return address || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
-    },
+    // {
+    //   accessorKey: "address",
+    //   header: "Address",
+    //   filterFn: "arrIncludesSome",
+    //   cell: ({ row }) => {
+    //     const address = row.original.address;
+    //     return address || DEFAULT_VALUES.NOT_AVAILABLE;
+    //   },
+    // },
     {
       accessorKey: "status",
       header: "Status",

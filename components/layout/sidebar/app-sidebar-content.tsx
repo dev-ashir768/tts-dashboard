@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import * as Icons from "lucide-react";
 import {
   Collapsible,
@@ -12,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
@@ -20,10 +21,37 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { menusData } from "@/lib/data";
+import { useAuthStore } from "@/store/auth.store";
+import { ROLE } from "@/lib/constants";
 
 const AppSidebarContent = () => {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+  const [isHydrated, setIsHydrated] = React.useState(false);
   const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const userRole = user?.role;
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsHydrated(true);
+  }, []);
+
+  const filteredMenus = useMemo(() => {
+    if (!userRole) return [];
+
+    return menusData
+      .filter((menu) => {
+        if (userRole === ROLE.SUPER_ADMIN) return true;
+        return (menu.permission as string[]).includes(userRole);
+      })
+      .map((menu) => ({
+        ...menu,
+        children: menu.children?.filter((child) => {
+          if (userRole === ROLE.SUPER_ADMIN) return true;
+          return (child.permission as string[]).includes(userRole);
+        }),
+      }));
+  }, [userRole]);
 
   useEffect(() => {
     const activeParent = menusData.find((item) =>
@@ -35,11 +63,27 @@ const AppSidebarContent = () => {
     }
   }, [pathname]);
 
+  if (!isHydrated || filteredMenus.length === 0) {
+    return (
+      <SidebarGroup>
+        <SidebarMenu>
+          {[...Array(10)].map((_, i) => {
+            return (
+              <SidebarMenuItem key={`skeleton-${i}`}>
+                <SidebarMenuSkeleton showIcon />
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+      </SidebarGroup>
+    );
+  }
+
   return (
     <>
       <SidebarGroup>
         <SidebarMenu>
-          {menusData.map((item) => {
+          {filteredMenus.map((item) => {
             const Icon = item.icon
               ? (Icons[item.icon as keyof typeof Icons] as React.ElementType)
               : null;

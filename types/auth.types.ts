@@ -1,10 +1,13 @@
+import { COUNTRY } from "@/lib/constants";
+
 export interface User {
   id: number;
   acno: string;
   full_name: string;
-  business_name: string;
-  brand_image: string;
+  business_name?: string;
+  brand_image?: string;
   email: string;
+  country: (typeof COUNTRY)[keyof typeof COUNTRY] | null;
   role: string;
   api_key: string;
   otp_verify: number;
@@ -22,7 +25,7 @@ export interface SigninResponse {
 export interface SignupResponse {
   status: number;
   message: string;
-  payload: User[];
+  payload: User[] | { property: string; message: string }[];
 }
 
 export interface VerifyOTPResponse {

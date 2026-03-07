@@ -66,7 +66,16 @@ export const useAuthMutation = {
         toast.success(response.message);
       },
       onError: (error) => {
-        toast.error(error.response?.data?.message);
+        const payload = error.response?.data?.payload;
+        const errorMessages = payload
+          ?.map((item) => ("message" in item ? item.message : ""))
+          .filter(Boolean);
+
+        toast.error(
+          errorMessages?.length
+            ? errorMessages.join(", ")
+            : error.response?.data?.message || "Signup failed",
+        );
         console.error("Signup Error:", error);
       },
     });

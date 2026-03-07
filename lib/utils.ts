@@ -68,3 +68,9 @@ export const exportTableData = <TData>(
   link.click();
   document.body.removeChild(link);
 };
+
+export const countryCheck = (country: string | null | undefined) => {
+  if (!country) return true;
+  const allowedCountries = ["US", "GB", "UK"];
+  return !allowedCountries.includes(country.toUpperCase());
+};

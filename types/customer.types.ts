@@ -1,3 +1,5 @@
+import { COUNTRY } from "@/lib/constants";
+
 export interface CustomerListType {
   id: number;
   acno: string;
@@ -6,6 +8,7 @@ export interface CustomerListType {
   contact_no: string;
   business_name: string | null;
   address: string | null;
+  country: (typeof COUNTRY)[keyof typeof COUNTRY];
   status: number;
 }
 

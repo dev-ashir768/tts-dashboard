@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Field, FieldDescription, FieldError, FieldGroup } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SignupFormValues, signupSchema } from "@/schema/auth.schema";
@@ -10,10 +15,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthMutation } from "@/hooks/mutations/auth.mutations";
 import Link from "next/link";
+import { useGeoQuery } from "@/hooks/queries/geo.queries";
+import { countryCheck } from "@/lib/utils";
 
 const SignupForm = () => {
   // ====================== Hooks ====================== \\
   const [isVisible, setIsVisible] = React.useState(false);
+
+  const { data: geoData } = useGeoQuery.GetCountry();
+  const country = geoData?.countryCode;
 
   const {
     register,
@@ -26,6 +36,7 @@ const SignupForm = () => {
       email: "",
       contact_no: "",
       full_name: "",
+      country,
     },
   });
 
@@ -38,7 +49,7 @@ const SignupForm = () => {
 
   // ====================== Form Submission ====================== \\
   const onSubmit = (data: SignupFormValues) => {
-    signupMutation.mutate(data);
+    signupMutation.mutate({ ...data, country });
   };
 
   return (
@@ -55,6 +66,7 @@ const SignupForm = () => {
               placeholder="Full Name"
               autoComplete="off"
               type="text"
+              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -68,6 +80,7 @@ const SignupForm = () => {
               placeholder="Contact Number"
               autoComplete="off"
               type="text"
+              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -81,6 +94,7 @@ const SignupForm = () => {
               placeholder="Email"
               autoComplete="off"
               type="text"
+              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -95,6 +109,7 @@ const SignupForm = () => {
               autoComplete="off"
               type={isVisible ? "text" : "password"}
               className="pr-10"
+              disabled={countryCheck(country)}
             />
             <Button
               type="button"
@@ -102,6 +117,7 @@ const SignupForm = () => {
               size="sm"
               onClick={handleTogglePassword}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-max!"
+              disabled={countryCheck(country)}
             >
               {isVisible ? <EyeOff /> : <Eye />}
             </Button>
@@ -112,20 +128,27 @@ const SignupForm = () => {
           )}
         </FieldGroup>
 
-        <Field>
-          <Button
-            type="submit"
-            form="signup-form"
-            size="lg"
-            className="w-full"
-            disabled={signupMutation.isPending}
-          >
-            {signupMutation.isPending ? "Signing up..." : "Sign up"}
-          </Button>
-          <FieldDescription className="text-center">
-            Already have an account? <Link href="/signin">Sign in</Link>
-          </FieldDescription>
-        </Field>
+        <FieldGroup className="gap-2">
+          <Field>
+            <Button
+              type="submit"
+              form="signup-form"
+              size="lg"
+              className="w-full"
+              disabled={signupMutation.isPending || countryCheck(country)}
+            >
+              {signupMutation.isPending ? "Signing up..." : "Sign up"}
+            </Button>
+          </Field>
+          <Field>
+            <FieldDescription>
+              Note: Signup is currently only available for US and UK customers.
+            </FieldDescription>
+            <FieldDescription className="text-center">
+              Already have an account? <Link href="/signin">Sign in</Link>
+            </FieldDescription>
+          </Field>
+        </FieldGroup>
       </form>
     </>
   );

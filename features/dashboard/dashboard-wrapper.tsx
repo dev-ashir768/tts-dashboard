@@ -4,10 +4,13 @@ import { DashboardOverviewChart } from "./dashboard-overview-chart";
 import { DashboardRecentActivity } from "./dashboard-recent-activity";
 import { DashboardBookings } from "./dashboard-bookings";
 import Header from "@/components/shared/header";
+import { DashboardBanner } from "./dashboard-banner";
 
 const DashboardWrapper = () => {
   return (
     <>
+      <DashboardBanner />
+
       <Header
         title="Dashboard Overview"
         description="Monitor your 3PL platform metrics, active personnel, and order volume."

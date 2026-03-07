@@ -93,20 +93,11 @@ const StaffList = () => {
       },
     },
     {
-      accessorKey: "business_name",
-      header: "Business Name",
+      accessorKey: "country",
+      header: "Country",
       filterFn: "arrIncludesSome",
       cell: ({ row }) => {
-        const businessName = row.original.business_name;
-        return businessName || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
-    },
-    {
-      accessorKey: "address",
-      header: "Address",
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const address = row.original.address;
+        const address = row.original.country;
         return address || DEFAULT_VALUES.NOT_AVAILABLE;
       },
     },
