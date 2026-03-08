@@ -34,7 +34,7 @@ interface UserProfileDialogProps {
 
 const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   // ====================== Hooks ====================== \\
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const data = {
     user_id: user ? user.id : null,
     acno: user ? user.acno : null,
@@ -62,7 +62,8 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   const { data: userByIdData } = useUserQuery.UserByIdQuery(data);
   const fullImageUrl = userByIdData?.payload[0].brand_image
     ? process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL +
-      "/" + `user_${user?.id}/` +
+      "/" +
+      `user_${user?.id}/` +
       userByIdData?.payload[0].brand_image
     : "";
 
@@ -78,7 +79,6 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
       reset();
     }
   }, [user, open, reset, userByIdData?.payload, fullImageUrl]);
-
 
   // ====================== Mutations ====================== \\
   const userProfileMutation = useUserMutation.UserProfileMutation();
@@ -98,6 +98,11 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   const onSubmit = (data: UserProfileFormValues) => {
     userProfileMutation.mutate(data, {
       onSuccess: () => {
+        updateUser({
+          full_name: data.full_name,
+          business_name: data.business_name,
+          brand_image: data.brand_image,
+        });
         onOpenChange(false);
         reset();
       },
@@ -125,7 +130,6 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
                 placeholder="Full Name"
                 autoComplete="off"
                 type="text"
-                disabled
               />
             </Field>
 

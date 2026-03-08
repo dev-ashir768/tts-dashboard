@@ -1,25 +1,36 @@
 "use client";
 
-import Link from "next/link";
-import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
 const AppSidebarFooter = () => {
+  const { logout } = useAuthStore();
+  const router = useRouter();
+  const { setOpenMobile } = useSidebar();
+
+  const handleLogout = () => {
+    logout();
+    setOpenMobile(false);
+    router.push("/");
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <footer className="text-center font-normal text-sm flex justify-center items-center">
-          <p>
-            &copy; {new Date().getFullYear()}{" "}
-            <Link
-              href="https://getorio.com"
-              target="_blank"
-              className="hover:underline underline-offset-2 cursor-pointer!"
-            >
-              Ashir
-            </Link>
-            . All rights reserved.
-          </p>
-        </footer>
+        <SidebarMenuButton
+          onClick={handleLogout}
+          className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-200 cursor-pointer"
+        >
+          <LogOut className="size-4" />
+          <span>Logout</span>
+        </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
   );

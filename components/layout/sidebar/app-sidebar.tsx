@@ -7,14 +7,12 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import AppSidebarHeader from "./app-sidebar-header";
 import AppSidebarFooter from "./app-sidebar-footer";
 import AppSidebarContent from "./app-sidebar-content";
 
 const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-  const { open } = useSidebar();
 
   return (
     <>
@@ -30,11 +28,9 @@ const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
         <SidebarContent>
           <AppSidebarContent />
         </SidebarContent>
-        {open && (
-          <SidebarFooter>
-            <AppSidebarFooter />
-          </SidebarFooter>
-        )}
+        <SidebarFooter>
+          <AppSidebarFooter />
+        </SidebarFooter>
         <SidebarRail />
       </Sidebar>
     </>

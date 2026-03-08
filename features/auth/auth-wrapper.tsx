@@ -2,7 +2,6 @@
 
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Blocks } from "lucide-react";
-import Image from "next/image";
 
 interface AuthWrapperProps {
   children: React.ReactNode;

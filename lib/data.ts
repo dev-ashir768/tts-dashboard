@@ -62,16 +62,6 @@ export const menusData = [
     ],
   },
   {
-    menu_id: 400,
-    menu_name: "Operations Desk",
-    icon: "Home",
-    sorting: 1,
-    url: "/staff/dashboard",
-    permission: [ROLE.ADMIN, ROLE.SUPER_ADMIN, ROLE.CUSTOMER, ROLE.STAFF],
-    parent_id: null,
-    children: [],
-  },
-  {
     menu_id: 500,
     menu_name: "Order Management",
     icon: "ShoppingCart",

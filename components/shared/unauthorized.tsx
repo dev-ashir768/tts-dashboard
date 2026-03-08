@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { PROTECTED_ROUTES } from "@/lib/constants";
 
 export default function Unauthorized() {
   return (
@@ -13,12 +14,11 @@ export default function Unauthorized() {
           </div>
           <h2 className="mt-4 text-2xl font-semibold">Access Denied</h2>
           <p className="mt-2 text-muted-foreground text-center max-w-md">
-            You do not have permission to view this page. Please contact your
-            administrator if you believe this is a mistake.
+            You do not have permission to view this page.
           </p>
           <div className="mt-8 flex gap-4">
             <Button asChild>
-              <Link href="/">Go Back Home</Link>
+              <Link href={PROTECTED_ROUTES.DASHBOARD.HOME}>Go Back Home</Link>
             </Button>
           </div>
         </div>
