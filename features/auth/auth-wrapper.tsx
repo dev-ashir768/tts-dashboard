@@ -1,6 +1,8 @@
 "use client";
 
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Blocks } from "lucide-react";
+import Image from "next/image";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -14,87 +16,49 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   description,
 }) => {
   return (
-    <>
-      <div className="grid min-h-svh lg:grid-cols-5">
-        <div className="relative hidden lg:flex col-span-3 justify-between items-center bg-cover bg-center bg-no-repeat bg-linear-to-b from-primary to-tertiary">
-          <div
-            style={{
-              backgroundImage: "url('/images/auth/auth-bg.png')",
-            }}
-            className="bg-no-repeat bg-contain bg-center absolute w-full h-[70%]"
-          />
-          <div>
-            <svg
-              width="2em"
-              height="2em"
-              viewBox="0 0 128 128"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-secondary/10 pointer-events-none absolute bottom-0 -right-35 size-96"
-            >
-              <path
-                d="M63.6734 24.8486V49.3899C63.6734 57.4589 57.1322 64.0001 49.0632 64.0001H25.2041"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></path>
-              <path
-                d="M64.3266 103.152L64.3266 78.6106C64.3266 70.5416 70.8678 64.0003 78.9368 64.0003L102.796 64.0004"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></path>
-              <line
-                x1="93.3468"
-                y1="35.6108"
-                x2="76.555"
-                y2="52.205"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></line>
-              <line
-                x1="51.7697"
-                y1="77.0624"
-                x2="34.9778"
-                y2="93.6567"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></line>
-              <line
-                x1="50.9584"
-                y1="51.3189"
-                x2="34.2651"
-                y2="34.6256"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></line>
-              <line
-                x1="93.1625"
-                y1="93.6397"
-                x2="76.4692"
-                y2="76.9464"
-                stroke="currentColor"
-                strokeWidth="8.11681"
-              ></line>
-            </svg>
-          </div>
-        </div>
-        <div className="flex items-center justify-center w-full col-span-2">
-          <div className="w-full max-w-md">
-            <div className="flex flex-col items-center gap-3 w-full mb-6">
-              <div className="bg-primary text-primary-foreground flex aspect-square size-10 items-center justify-center rounded-lg">
-                <Blocks className="size-5" />
-              </div>
-              <h1 className="text-center text-4xl font-bold">{title}</h1>
-              {description && (
-                <p className="text-center text-base text-muted-foreground">
-                  {description}
-                </p>
-              )}
-            </div>
-            {children}
-          </div>
+    <div className="min-h-svh w-full flex bg-background relative selection:bg-primary/30">
+      <div className="absolute top-4 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
+      {/* Left Pane - Branding & Visuals */}
+      <div className="hidden lg:flex w-1/2 bg-zinc-950 flex-col justify-between p-12 relative overflow-hidden text-white">
+        {/* Abstract Background pattern or gradient */}
+        <div className="absolute inset-0 bg-primary/20 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.3),rgba(255,255,255,0))]"></div>
+        <div className="absolute top-0 right-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]"></div>
+
+        <div className="relative z-10 mt-auto">
+          <h2 className="text-3xl font-bold tracking-tight mb-4">
+            Next-Generation 3PL Management
+          </h2>
+          <p className="text-zinc-400 text-lg max-w-md">
+            Streamline your logistics, empower your workforce, and deliver
+            unparalleled customer experiences with our ultimate dashboard.
+          </p>
         </div>
       </div>
-    </>
+
+      {/* Right Pane - Form */}
+      <div className="flex flex-1 items-center justify-center p-8 lg:p-12 relative bg-card shadow-[inset_1px_0_0_0_var(--color-border)]">
+        <div className="w-full max-w-[420px] mx-auto flex flex-col items-center">
+          <div className="flex flex-col items-center text-center mb-8 gap-2">
+            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 text-primary mb-2">
+              <Blocks className="size-6" />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {title}
+            </h1>
+            {description && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {description}
+              </p>
+            )}
+          </div>
+
+          <div className="w-full">{children}</div>
+        </div>
+      </div>
+    </div>
   );
 };
 

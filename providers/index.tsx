@@ -1,5 +1,5 @@
 import QueryProvider from "@/providers/QueryProvider";
-// import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "next-themes";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -7,9 +7,9 @@ interface ProvidersProps {
 
 const Providers = ({ children }: ProvidersProps) => {
   return (
-    // <ThemeProvider attribute="class" defaultTheme="dark">
+    <ThemeProvider attribute="class" defaultTheme="dark">
       <QueryProvider>{children}</QueryProvider>
-    // </ThemeProvider>
+    </ThemeProvider>
   );
 };
 

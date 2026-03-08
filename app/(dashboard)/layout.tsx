@@ -14,7 +14,7 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({ children }) => {
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          <div className="flex flex-1 flex-col gap-4 p-4 bg-[#f8fafc] contain-inline-size">
+          <div className="flex flex-1 flex-col gap-4 p-4 bg-background contain-inline-size">
             {children}
           </div>
         </SidebarInset>
