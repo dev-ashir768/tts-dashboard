@@ -4,6 +4,7 @@ import { DataTable } from "@/components/shared/datatable/datatable";
 import EmptyState from "@/components/shared/empty-state";
 import Header from "@/components/shared/header";
 import TableSkeleton from "@/components/shared/table-skeleton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCustomerMutation } from "@/hooks/mutations/customer.mutations";
@@ -63,7 +64,7 @@ const CustomerList = () => {
   const columns: ColumnDef<CustomerListType>[] = [
     {
       accessorKey: "acno",
-      header: "Account Number",
+      header: "Account No",
       filterFn: "arrIncludesSome",
       cell: ({ row }) => {
         const fullName = row.original.acno;
@@ -93,8 +94,18 @@ const CustomerList = () => {
       header: "Country",
       filterFn: "arrIncludesSome",
       cell: ({ row }) => {
-        const fullName = row.original.country;
-        return fullName || DEFAULT_VALUES.NOT_AVAILABLE;
+        const country = row.original.country;
+        return (
+          <Badge
+            variant={
+              country?.toLowerCase() as React.ComponentProps<
+                typeof Badge
+              >["variant"]
+            }
+          >
+            {country || DEFAULT_VALUES.NOT_AVAILABLE}
+          </Badge>
+        );
       },
     },
     {

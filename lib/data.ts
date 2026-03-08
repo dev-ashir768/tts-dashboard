@@ -16,28 +16,28 @@ export const menusData = [
     menu_name: "User Management",
     icon: "Users",
     sorting: 2,
-    url: "/users",
+    url: "/user-management",
     permission: ["admin", "super_admin"],
     parent_id: null,
     children: [
       {
         menu_id: 201,
         menu_name: "Admin",
-        url: "/users/admin",
+        url: "/user-management/admin",
         permission: ["super_admin"],
         parent_id: 200,
       },
       {
         menu_id: 202,
         menu_name: "Staff",
-        url: "/users/staff",
+        url: "/user-management/staff",
         permission: ["admin", "super_admin"],
         parent_id: 200,
       },
       {
         menu_id: 203,
         menu_name: "Customer",
-        url: "/users/customer",
+        url: "/user-management/customer",
         permission: ["admin", "super_admin"],
         parent_id: 200,
       },
@@ -95,5 +95,5 @@ export const menusData = [
         parent_id: 500,
       },
     ],
-  }
+  },
 ];

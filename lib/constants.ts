@@ -9,7 +9,6 @@ export const PUBLIC_ROUTES = {
 
 export const STORAGE_KEYS = {
   AUTH_STATE: "auth-storage",
-  THEME: "ui-theme",
 } as const;
 
 export const API_ENDPOINTS = {
@@ -32,6 +31,9 @@ export const API_ENDPOINTS = {
     STAFF_STATUS_UPDATE: "/staff/status",
     CREATE_STAFF: "/staff/create",
   },
+  ADMIN: {
+    ADMIN_LIST: "/admin/list",
+  },
 } as const;
 
 export const QUERY_KEYS = {
@@ -44,13 +46,17 @@ export const QUERY_KEYS = {
   STAFF: {
     STAFF_LIST: "staff-list",
   },
+  ADMIN: {
+    ADMIN_LIST: "admin-list",
+  },
 } as const;
 
 export const PROTECTED_ROUTES = {
   DASHBOARD: {
     HOME: "/",
-    CUSTOMER: "/customer",
-    STAFF: "/staff",
+    CUSTOMER: "/user-management/customer",
+    STAFF: "/user-management/staff",
+    ADMIN: "/user-management/admin",
   },
 } as const;
 

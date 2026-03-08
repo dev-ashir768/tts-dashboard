@@ -83,7 +83,7 @@ export function DataTablePagination<TData>({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 w-[70px] justify-between px-3 text-xs bg-background border-input shadow-sm hover:bg-accent hover:text-accent-foreground"
+                className="h-8 w-[70px] justify-between px-3 text-xs bg-background border-input hover:bg-accent hover:text-accent-foreground"
               >
                 {pageSize}
                 <ChevronDown className="h-3.5 w-3.5 opacity-50 shrink-0" />
@@ -116,7 +116,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center space-x-1.5">
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 disabled:pointer-events-auto disabled:cursor-not-allowed"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -158,7 +158,7 @@ export function DataTablePagination<TData>({
 
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 disabled:pointer-events-auto disabled:cursor-not-allowed"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
