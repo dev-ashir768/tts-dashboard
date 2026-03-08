@@ -30,7 +30,7 @@ const StaffList = () => {
     user_id: user ? user.id : null,
     acno: user ? user.acno : null,
   };
-  
+
   //========== Data Fetching ==========
   const {
     data: staffList,
@@ -103,7 +103,9 @@ const StaffList = () => {
         return (
           <Badge
             variant={
-              country?.toLowerCase() as React.ComponentProps<typeof Badge>["variant"]
+              country?.toLowerCase() as React.ComponentProps<
+                typeof Badge
+              >["variant"]
             }
           >
             {country || DEFAULT_VALUES.NOT_AVAILABLE}
@@ -163,9 +165,11 @@ const StaffList = () => {
   return (
     <>
       <Header title="Staff List" description="Manage your staff">
-        <Button size="lg" onClick={() => setIsStaffFormDialogOpen(true)}>
-          Add Staff
-        </Button>
+        {user?.role === "admin" && (
+          <Button size="lg" onClick={() => setIsStaffFormDialogOpen(true)}>
+            Add Staff
+          </Button>
+        )}
       </Header>
 
       <Card className="shadow-none border-0">

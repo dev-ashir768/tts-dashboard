@@ -96,12 +96,18 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
 
   // ====================== Form Submit ====================== \\
   const onSubmit = (data: UserProfileFormValues) => {
-    userProfileMutation.mutate(data, {
+    const payload: Partial<UserProfileFormValues> = { ...data };
+
+    if (payload.brand_image && payload.brand_image.startsWith("http")) {
+      delete payload.brand_image;
+    }
+
+    userProfileMutation.mutate(payload as UserProfileFormValues, {
       onSuccess: () => {
         updateUser({
           full_name: data.full_name,
           business_name: data.business_name,
-          brand_image: data.brand_image,
+          brand_image: payload.brand_image || data.brand_image,
         });
         onOpenChange(false);
         reset();
