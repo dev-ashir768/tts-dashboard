@@ -74,3 +74,4 @@ export const countryCheck = (country: string | null | undefined) => {
   const allowedCountries = ["US", "GB", "UK"];
   return !allowedCountries.includes(country.toUpperCase());
 };
+

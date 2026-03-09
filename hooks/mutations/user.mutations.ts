@@ -10,9 +10,10 @@ import {
   ChangePasswordResponse,
   UserProfileResponse,
 } from "@/types/user.types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { QUERY_KEYS } from "@/lib/constants";
 
 export const useUserMutation = {
   ChangePasswordMutation: () => {
@@ -36,6 +37,7 @@ export const useUserMutation = {
   },
 
   UserProfileMutation: () => {
+    const queryClient = useQueryClient();
     return useMutation<
       UserProfileResponse,
       AxiosError<ApiErrorResponse>,
@@ -46,6 +48,9 @@ export const useUserMutation = {
         return response;
       },
       onSuccess: (response) => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.DASHBOARD.INDEX],
+        });
         toast.success(response.message);
       },
       onError: (error) => {

@@ -6,12 +6,14 @@ import {
   CreateStaffResponse,
   StaffStatusUpdateResponse,
 } from "@/types/staff.types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { QUERY_KEYS } from "@/lib/constants";
 
 export const useStaffMutation = {
   StaffStatusUpdateMutation: () => {
+    const queryClient = useQueryClient();
     return useMutation<
       StaffStatusUpdateResponse,
       AxiosError<StaffStatusUpdateResponse>,
@@ -22,6 +24,12 @@ export const useStaffMutation = {
         return response;
       },
       onSuccess: (response) => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.DASHBOARD.INDEX],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.STAFF.STAFF_LIST],
+        });
         toast.success(response.message);
       },
       onError: (error) => {
@@ -32,6 +40,7 @@ export const useStaffMutation = {
   },
 
   CreateStaffMutation: () => {
+    const queryClient = useQueryClient();
     return useMutation<
       CreateStaffResponse,
       AxiosError<CreateStaffResponse>,
@@ -42,6 +51,12 @@ export const useStaffMutation = {
         return response;
       },
       onSuccess: (response) => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.DASHBOARD.INDEX],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.STAFF.STAFF_LIST],
+        });
         toast.success(response.message);
       },
       onError: (error) => {

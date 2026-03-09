@@ -34,6 +34,18 @@ export const API_ENDPOINTS = {
   ADMIN: {
     ADMIN_LIST: "/admin/list",
   },
+  ORDER: {
+    ORDER_LIST: "/orders/list",
+    CREATE_ORDER: "/orders/create",
+    ORDER_STATUS_UPDATE: "/orders/mark_confirm_status",
+  },
+  WAREHOUSE: {
+    WAREHOUSE_LIST: "/warehouse/list",
+    CREATE_WAREHOUSE: "/warehouse/create",
+  },
+  DASHBOARD: {
+    INDEX: "/dashboard/index",
+  },
 } as const;
 
 export const QUERY_KEYS = {
@@ -49,6 +61,15 @@ export const QUERY_KEYS = {
   ADMIN: {
     ADMIN_LIST: "admin-list",
   },
+  ORDER: {
+    ORDER_LIST: "order-list",
+  },
+  WAREHOUSE: {
+    WAREHOUSE_LIST: "warehouse-list",
+  },
+  DASHBOARD: {
+    INDEX: "dashboard-index",
+  },
 } as const;
 
 export const PROTECTED_ROUTES = {
@@ -57,6 +78,8 @@ export const PROTECTED_ROUTES = {
     CUSTOMER: "/user-management/customer",
     STAFF: "/user-management/staff",
     ADMIN: "/user-management/admin",
+    ORDERS: "/orders",
+    WAREHOUSE: "/warehouse/locations",
   },
 } as const;
 

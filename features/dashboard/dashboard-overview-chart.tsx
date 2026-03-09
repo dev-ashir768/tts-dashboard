@@ -1,7 +1,14 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
-import { Area, AreaChart } from "recharts";
+import {
+  Pie,
+  PieChart,
+  BarChart,
+  Bar,
+  XAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 import {
   Card,
@@ -11,77 +18,129 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+  DashboardPayload,
+  OrdersByStatus,
+  OrdersByCountry,
+} from "@/types/dashboard.types";
 
-const chartData = [
-  { month: "Jan", orders: 186, customers: 80 },
-  { month: "Feb", orders: 305, customers: 200 },
-  { month: "Mar", orders: 237, customers: 120 },
-  { month: "Apr", orders: 73, customers: 190 },
-  { month: "May", orders: 209, customers: 130 },
-  { month: "Jun", orders: 214, customers: 140 },
-];
+interface DashboardOverviewChartProps {
+  data?: DashboardPayload;
+}
 
-const chartConfig = {
-  orders: {
-    label: "Orders",
-    color: "var(--primary)",
-  },
-  customers: {
-    label: "Customers",
-    color: "var(--tertiary)",
-  },
-} satisfies ChartConfig;
+// Map specific countries to distinct colors for the Radial chart
+const COUNTRY_COLORS: Record<string, string> = {
+  US: "#3b82f6",
+  UK: "#ef4444",
+  DEFAULT: "#8b5cf6",
+};
 
-export function DashboardOverviewChart() {
+export function DashboardOverviewChart({ data }: DashboardOverviewChartProps) {
+  if (!data) return null;
+
+  const isCustomer = data.role === "customer";
+
+  const chartTitle = isCustomer ? "Orders by Status" : "Orders by Country";
+  const dataKey = isCustomer ? "total" : "total_orders";
+  const nameKey = isCustomer ? "status_name" : "country";
+
+  // Pre-process Data to inject fill colors for RadialBarChart
+  const rawData = isCustomer
+    ? data.orders_by_status || []
+    : data.orders_by_country || [];
+
+  const chartData = rawData.map((item: OrdersByStatus | OrdersByCountry) => {
+    const itemKey = isCustomer
+      ? (item as OrdersByStatus).status_name
+      : (item as OrdersByCountry).country;
+
+    return {
+      ...item,
+      fill: COUNTRY_COLORS[itemKey] || COUNTRY_COLORS.DEFAULT,
+    };
+  });
+
   return (
-    <Card className="shadow-none border-none justify-between h-full pb-0">
+    <Card className="shadow-none border-none justify-between h-full pb-0 flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
-          <CardTitle>Platform Activity</CardTitle>
-          <CardDescription>Orders and customers last 6 months</CardDescription>
-        </div>
-        <div className="flex items-center gap-2 font-medium text-sm text-green-500 bg-green-500/10 px-2 py-1 rounded-md">
-          <TrendingUp className="h-4 w-4" />
-          5.2%
+          <CardTitle>{chartTitle}</CardTitle>
+          <CardDescription>
+            Breakdown of your recent order volume
+          </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-0">
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-            }}
-          >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
-            />
-            <Area
-              dataKey="customers"
-              type="natural"
-              fill="var(--color-customers)"
-              fillOpacity={0.4}
-              stroke="var(--color-customers)"
-            />
-            <Area
-              dataKey="orders"
-              type="natural"
-              fill="var(--color-orders)"
-              fillOpacity={0.4}
-              stroke="var(--color-orders)"
-            />
-          </AreaChart>
-        </ChartContainer>
+      <CardContent className="flex-1 px-0 min-h-[250px]">
+        {chartData.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+            No data available
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            {isCustomer ? (
+              <PieChart>
+                <Tooltip />
+                <Pie
+                  data={chartData}
+                  dataKey={dataKey}
+                  nameKey={nameKey}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="var(--primary)"
+                  label
+                />
+              </PieChart>
+            ) : (
+              <BarChart
+                data={chartData}
+                margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--primary)"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--primary)"
+                      stopOpacity={0.2}
+                    />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey={nameKey}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  fontSize={12}
+                  className="text-muted-foreground"
+                />
+                <Tooltip
+                  cursor={{ fill: "var(--accent)", opacity: 0.2 }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderRadius: "8px",
+                    border: "1px solid hsl(var(--border))",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                    color: "hsl(var(--card-foreground))",
+                  }}
+                  itemStyle={{
+                    color: "hsl(var(--foreground))",
+                    fontWeight: 500,
+                  }}
+                />
+                <Bar
+                  dataKey={dataKey}
+                  fill="url(#colorOrders)"
+                  radius={[6, 6, 0, 0]}
+                  barSize={40}
+                />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

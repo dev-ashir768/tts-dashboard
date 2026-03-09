@@ -79,27 +79,29 @@ export const userProfileSchema = z.object({
     .trim()
     .refine((val) => !forbiddenCodeRegex.test(val), {
       error: "Invalid input: Code-like content is not allowed",
-    }).optional(),
+    })
+    .optional(),
 
   address: z
     .string()
-    .min(10, {
-      error: (issue) =>
-        issue.input === ""
-          ? "Address is required"
-          : "Address must be at least 10 characters",
-    })
     .trim()
     .refine((val) => !forbiddenCodeRegex.test(val), {
       error: "Invalid input: Code-like content is not allowed",
-    }),
+    }) .optional(),
 
   brand_image: z
     .string()
-    .min(1, { message: "Brand image is required" })
-    .refine((val) => val.startsWith("data:image/") || val.startsWith("http"), {
-      message: "Invalid brand image",
-    }),
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        val === "" ||
+        val.startsWith("data:image/") ||
+        val.startsWith("http"),
+      {
+        message: "Invalid brand image",
+      },
+    ),
 });
 
 export type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;

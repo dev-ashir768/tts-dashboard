@@ -21,8 +21,15 @@ const badgeVariants = cva(
           "border-transparent bg-[#d1fae5] text-[#065f46] hover:bg-[#a7f3d0]",
         inactive:
           "border-transparent bg-[#ffe4e6] text-[#9f1239] hover:bg-[#fecdd3]",
-          us: "border-transparent bg-[#e0e7ff] text-[#1e1b4b] hover:bg-[#c7d2fe]",
-          uk: "border-transparent bg-[#dbeafe] text-[#1e3a8a] hover:bg-[#bfdbfe]",
+        us: "border-transparent bg-[#e0e7ff] text-[#1e1b4b] hover:bg-[#c7d2fe]",
+        uk: "border-transparent bg-[#dbeafe] text-[#1e3a8a] hover:bg-[#bfdbfe]",
+        new: "border-transparent bg-[#f0f9ff] text-[#0369a1] hover:bg-[#e0f2fe]",
+        confirmed:
+          "border-transparent bg-[#f0fdf4] text-[#166534] hover:bg-[#dcfce7]",
+        posted:
+          "border-transparent bg-[#faf5ff] text-[#581c87] hover:bg-[#f3e8ff]",
+        cancelled:
+          "border-transparent bg-[#fef2f2] text-[#991b1b] hover:bg-[#fee2e2]",
       },
       size: {
         "badge-lg":

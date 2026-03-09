@@ -25,6 +25,13 @@ const buttonVariants = cva(
           "border-transparent bg-[#ffe4e6] text-[#9f1239] hover:bg-[#fecdd3]",
         us: "border-transparent bg-[#e0e7ff] text-[#1e1b4b] hover:bg-[#c7d2fe]",
         uk: "border-transparent bg-[#dbeafe] text-[#1e3a8a] hover:bg-[#bfdbfe]",
+      new: "border-transparent bg-[#f0f9ff] text-[#0369a1] hover:bg-[#e0f2fe]",
+      confirmed:
+        "border-transparent bg-[#f0fdf4] text-[#166534] hover:bg-[#dcfce7]",
+      posted:
+        "border-transparent bg-[#faf5ff] text-[#581c87] hover:bg-[#f3e8ff]",
+      cancelled:
+        "border-transparent bg-[#fef2f2] text-[#991b1b] hover:bg-[#fee2e2]",
         input:
           "min-w-0 border border-input bg-transparent text-base shadow-xs transition-[color,box-shadow] outline-none text-muted-foreground hover:bg-transparent text-left font-normal md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] justify-start",
       },

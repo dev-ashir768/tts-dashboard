@@ -82,15 +82,13 @@ const UserProfile = () => {
           sideOffset={4}
         >
           <DropdownMenuGroup>
-            {user?.role === "customer" && (
-              <DropdownMenuItem
+            <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => setIsProfileDialogOpen(true)}
               >
                 <User />
                 User Profile
               </DropdownMenuItem>
-            )}
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => setIsPasswordDialogOpen(true)}

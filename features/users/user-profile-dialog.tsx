@@ -26,6 +26,9 @@ import { convertToBase64 } from "@/lib/utils";
 import Image from "next/image";
 import { FileText, Upload, X } from "lucide-react";
 import { useUserQuery } from "@/hooks/queries/user.queries";
+import { QUERY_KEYS } from "@/lib/constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { fetchExternalImageAsBase64 } from "@/actions/image.action";
 
 interface UserProfileDialogProps {
   open: boolean;
@@ -35,6 +38,8 @@ interface UserProfileDialogProps {
 const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   // ====================== Hooks ====================== \\
   const { user, updateUser } = useAuthStore();
+  const queryClient = useQueryClient();
+
   const data = {
     user_id: user ? user.id : null,
     acno: user ? user.acno : null,
@@ -95,10 +100,30 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
   );
 
   // ====================== Form Submit ====================== \\
-  const onSubmit = (data: UserProfileFormValues) => {
+  const onSubmit = async (data: UserProfileFormValues) => {
     const payload: Partial<UserProfileFormValues> = { ...data };
 
     if (payload.brand_image && payload.brand_image.startsWith("http")) {
+      try {
+        const base64Str = await fetchExternalImageAsBase64(payload.brand_image);
+        if (base64Str) {
+          payload.brand_image = base64Str;
+        } else {
+          delete payload.brand_image;
+        }
+      } catch (error) {
+        console.error("Failed to convert existing image to base64", error);
+        delete payload.brand_image;
+      }
+    }
+
+    if (!payload.address) {
+      delete payload.address;
+    }
+    if (!payload.business_name) {
+      delete payload.business_name;
+    }
+    if (!payload.brand_image) {
       delete payload.brand_image;
     }
 
@@ -108,6 +133,13 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
           full_name: data.full_name,
           business_name: data.business_name,
           brand_image: payload.brand_image || data.brand_image,
+        });
+        queryClient.invalidateQueries({
+          queryKey: [
+            QUERY_KEYS.USER.USER_BY_ID,
+            ...(user?.acno ? [user.acno] : []),
+            ...(user?.id ? [user.id] : []),
+          ],
         });
         onOpenChange(false);
         reset();
@@ -142,106 +174,112 @@ const UserProfileDialog = ({ open, onOpenChange }: UserProfileDialogProps) => {
             {errors.full_name && <FieldError errors={[errors.full_name]} />}
           </FieldGroup>
 
-          <FieldGroup className="gap-2">
-            <Field>
-              <Input
-                {...register("business_name")}
-                placeholder="Business Name *"
-                autoComplete="off"
-                type="text"
-              />
-            </Field>
+          {user?.role === "customer" && (
+            <>
+              <FieldGroup className="gap-2">
+                <Field>
+                  <Input
+                    {...register("business_name")}
+                    placeholder="Business Name *"
+                    autoComplete="off"
+                    type="text"
+                  />
+                </Field>
 
-            {errors.business_name && (
-              <FieldError errors={[errors.business_name]} />
-            )}
-          </FieldGroup>
+                {errors.business_name && (
+                  <FieldError errors={[errors.business_name]} />
+                )}
+              </FieldGroup>
 
-          <FieldGroup className="gap-2">
-            <Field className="h-full">
-              <Controller
-                name="brand_image"
-                control={control}
-                render={({ field }) => (
-                  <FileUpload
-                    accept="image/*"
-                    maxSize={5 * 1024 * 1024}
-                    onAccept={(files) => onFileSelect(files)}
-                    className="h-full"
-                  >
-                    <FileUploadDropzone className="h-full cursor-pointer border-2 border-dashed">
-                      {field.value ? (
-                        <div className="flex flex-col items-center gap-1">
-                          {field.value.startsWith("data:image") ||
-                          field.value.startsWith("http") ||
-                          field.value.startsWith("https") ? (
-                            <div className="relative flex items-center gap-2.5 rounded-md border p-0">
-                              <div className="relative flex size-20 shrink-0 items-center justify-center rounded border bg-accent/50 p-1">
-                                <Image
-                                  src={field.value}
-                                  alt={field.value}
-                                  fill
-                                  className="size-full object-contain"
-                                />
-                              </div>
-                              <span className="sr-only">
-                                {field.value || "Image Attached"}
-                              </span>
-                              <Button
-                                type="button"
-                                variant="secondary"
-                                size="icon"
-                                className="absolute -top-1 -right-1 size-5 rounded-full"
-                                onClick={() => field.onChange("")}
-                              >
-                                <X className="size-3" />
-                              </Button>
+              <FieldGroup className="gap-2">
+                <Field className="h-full">
+                  <Controller
+                    name="brand_image"
+                    control={control}
+                    render={({ field }) => (
+                      <FileUpload
+                        accept="image/*"
+                        maxSize={5 * 1024 * 1024}
+                        onAccept={(files) => onFileSelect(files)}
+                        className="h-full"
+                      >
+                        <FileUploadDropzone className="h-full cursor-pointer border-2 border-dashed">
+                          {field.value ? (
+                            <div className="flex flex-col items-center gap-1">
+                              {field.value.startsWith("data:image") ||
+                              field.value.startsWith("http") ||
+                              field.value.startsWith("https") ? (
+                                <div className="relative flex items-center gap-2.5 rounded-md border p-0">
+                                  <div className="relative flex size-20 shrink-0 items-center justify-center rounded border bg-accent/50 p-1">
+                                    <Image
+                                      src={field.value}
+                                      alt={field.value}
+                                      fill
+                                      className="size-full object-contain"
+                                    />
+                                  </div>
+                                  <span className="sr-only">
+                                    {field.value || "Image Attached"}
+                                  </span>
+                                  <Button
+                                    type="button"
+                                    variant="secondary"
+                                    size="icon"
+                                    className="absolute -top-1 -right-1 size-5 rounded-full"
+                                    onClick={() => field.onChange("")}
+                                  >
+                                    <X className="size-3" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <FileText className="size-10 text-primary" />
+                              )}
+                              <p className="text-[10px] font-medium">
+                                File Attached
+                              </p>
                             </div>
                           ) : (
-                            <FileText className="size-10 text-primary" />
+                            <div className="flex flex-col items-center gap-1 text-center">
+                              <Upload className="size-5 text-muted-foreground" />
+                              <p className="text-xs text-muted-foreground">
+                                Drop image here
+                              </p>
+                              <FileUploadTrigger asChild>
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  className="h-auto p-0 text-xs"
+                                >
+                                  Browse
+                                </Button>
+                              </FileUploadTrigger>
+                            </div>
                           )}
-                          <p className="text-[10px] font-medium">
-                            File Attached
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1 text-center">
-                          <Upload className="size-5 text-muted-foreground" />
-                          <p className="text-xs text-muted-foreground">
-                            Drop image here
-                          </p>
-                          <FileUploadTrigger asChild>
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="h-auto p-0 text-xs"
-                            >
-                              Browse
-                            </Button>
-                          </FileUploadTrigger>
-                        </div>
-                      )}
-                    </FileUploadDropzone>
-                  </FileUpload>
+                        </FileUploadDropzone>
+                      </FileUpload>
+                    )}
+                  />
+                </Field>
+
+                {errors.brand_image && (
+                  <FieldError errors={[errors.brand_image]} />
                 )}
-              />
-            </Field>
+              </FieldGroup>
 
-            {errors.brand_image && <FieldError errors={[errors.brand_image]} />}
-          </FieldGroup>
+              <FieldGroup className="gap-2">
+                <Field>
+                  <Textarea
+                    {...register("address")}
+                    placeholder="Address *"
+                    autoComplete="off"
+                    rows={4}
+                  />
+                </Field>
 
-          <FieldGroup className="gap-2">
-            <Field>
-              <Textarea
-                {...register("address")}
-                placeholder="Address *"
-                autoComplete="off"
-                rows={4}
-              />
-            </Field>
-
-            {errors.address && <FieldError errors={[errors.address]} />}
-          </FieldGroup>
+                {errors.address && <FieldError errors={[errors.address]} />}
+              </FieldGroup>
+            </>
+          )}
         </form>
         <ResponsiveDialogFooter className="mt-2">
           <ResponsiveDialogClose asChild>
