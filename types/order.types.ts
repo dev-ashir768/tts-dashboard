@@ -10,6 +10,9 @@ export interface OrderListType {
   status_name: string;
   full_name: string;
   remarks:  string;
+  consignee_address: string;
+  shipper_address: string;
+  label_pdf: string;
   country: (typeof COUNTRY)[keyof typeof COUNTRY];
   created_date: string;
 }

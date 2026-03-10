@@ -1,7 +1,12 @@
 import apiClient from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { OrderFormValues } from "@/schema/order.schema";
-import { OrderListResponse, CreateOrderResponse } from "@/types/order.types";
+import {
+  OrderListResponse,
+  CreateOrderResponse,
+  UpdateOrderStatusRequest,
+  UpdateOrderStatusResponse,
+} from "@/types/order.types";
 
 interface orderListProps {
   user_id: number | null;
@@ -24,11 +29,12 @@ export const orderService = {
     return response.data;
   },
   updateOrderStatus: async (
-    data: import("@/types/order.types").UpdateOrderStatusRequest,
-  ): Promise<import("@/types/order.types").UpdateOrderStatusResponse> => {
-    const response = await apiClient.post<
-      import("@/types/order.types").UpdateOrderStatusResponse
-    >(API_ENDPOINTS.ORDER.ORDER_STATUS_UPDATE, data);
+    data: UpdateOrderStatusRequest,
+  ): Promise<UpdateOrderStatusResponse> => {
+    const response = await apiClient.post<UpdateOrderStatusResponse>(
+      API_ENDPOINTS.ORDER.ORDER_STATUS_UPDATE,
+      data,
+    );
     return response.data;
   },
 };

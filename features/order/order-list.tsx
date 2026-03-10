@@ -13,21 +13,23 @@ import { useAuthStore } from "@/store/auth.store";
 import { OrderListType } from "@/types/order.types";
 import { useState } from "react";
 import { useOrderMutation } from "@/hooks/mutations/order.mutations";
-import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/constants";
 import { ColumnDef } from "@tanstack/react-table";
+import { toast } from "sonner";
 import OrderFormDialog from "./order-form-dialog";
+import { OrderDetailsDialog } from "./order-details-dialog";
 
 const OrderList = () => {
   const { user } = useAuthStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<OrderListType | null>(
+    null,
+  );
   const [confirmingOrderId, setConfirmingOrderId] = useState<number | null>(
     null,
   );
-  const queryClient = useQueryClient();
 
   // Mutations
-  const { mutate: updateOrderStatus } =
+  const { mutateAsync: updateOrderStatusAsync } =
     useOrderMutation.UpdateOrderStatusMutation();
 
   const data = {
@@ -47,60 +49,75 @@ const OrderList = () => {
     {
       accessorKey: "order_id",
       header: "Order ID",
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const orderId = row.original.order_id;
-        return orderId || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
-    },
-    {
-      accessorKey: "acno",
-      header: "Account No",
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const acno = row.original.acno;
-        return acno || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
+      cell: ({ row }) => (
+        <span
+          className="text-primary hover:underline cursor-pointer font-medium"
+          onClick={() => setSelectedOrder(row.original)}
+        >
+          {row.original.order_id || DEFAULT_VALUES.NOT_AVAILABLE}
+        </span>
+      ),
     },
     {
       accessorKey: "full_name",
-      header: "Full Name",
+      header: "Account & Customer",
       filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const fullName = row.original.full_name;
-        return fullName || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{row.original.acno || "No ACNO"}</span>
+          <span className="text-xs text-muted-foreground">
+            {row.original.full_name || "No Name"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "shipper_address",
+      header: "Routing Addresses",
+      filterFn: "arrIncludesSome",
+      cell: ({ row }) => (
+        <div className="flex flex-col gap-2 max-w-[250px]">
+          <span
+            className="whitespace-pre-wrap break-all text-xs leading-tight"
+            title={`Shipper: ${row.original.shipper_address}`}
+          >
+            <span className="font-semibold text-muted-foreground mr-1">S:</span>
+            {row.original.shipper_address || DEFAULT_VALUES.NOT_AVAILABLE}
+          </span>
+          <span
+            className="whitespace-pre-wrap break-all text-xs leading-tight"
+            title={`Consignee: ${row.original.consignee_address}`}
+          >
+            <span className="font-semibold text-muted-foreground mr-1">C:</span>
+            {row.original.consignee_address || DEFAULT_VALUES.NOT_AVAILABLE}
+          </span>
+        </div>
+      ),
     },
     {
       accessorKey: "tracking_id",
-      header: "Tracking ID",
+      header: "Tracking / ASIN",
       filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const trackingId = row.original.tracking_id;
-        return trackingId || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
-    },
-    {
-      accessorKey: "asin_id",
-      header: "ASIN ID",
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => {
-        const asinId = row.original.asin_id;
-        return asinId || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
-    },
-    {
-      accessorKey: "remarks",
-      header: "Reamrks",
-      cell: ({ row }) => {
-        const remarks = row.original.remarks;
-        return remarks || DEFAULT_VALUES.NOT_AVAILABLE;
-      },
+      cell: ({ row }) => (
+        <div className="flex flex-col text-xs space-y-1">
+          <span>
+            <strong className="font-medium text-muted-foreground mr-1">
+              TID:
+            </strong>{" "}
+            {row.original.tracking_id || "N/A"}
+          </span>
+          <span>
+            <strong className="font-medium text-muted-foreground mr-1">
+              ASIN:
+            </strong>{" "}
+            {row.original.asin_id || "N/A"}
+          </span>
+        </div>
+      ),
     },
     {
       accessorKey: "country",
       header: "Country",
-      filterFn: "arrIncludesSome",
       cell: ({ row }) => {
         const country = row.original.country;
         return (
@@ -117,76 +134,93 @@ const OrderList = () => {
       },
     },
     {
-      accessorKey: "status_name",
-      header: "Status",
-      filterFn: "arrIncludesSome",
+      accessorKey: "label_pdf",
+      header: "Label",
       cell: ({ row }) => {
-        const statusName = row.original.status_name;
+        const userId = row.original.user_id;
+        const labelPdf = row.original.label_pdf;
+        if (!labelPdf)
+          return <span className="text-xs text-muted-foreground">N/A</span>;
+
+        const baseUrl = process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || "";
+        const printUrl = `${baseUrl}/user_${userId}/${labelPdf}`;
+
         return (
-          <Badge
-            variant={
-              statusName?.toLowerCase() as React.ComponentProps<
-                typeof Badge
-              >["variant"]
-            }
+          <a
+            href={printUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs text-blue-500 hover:text-blue-600 hover:underline flex items-center gap-1 font-medium"
           >
-            {statusName || DEFAULT_VALUES.NOT_AVAILABLE}
-          </Badge>
+            View Label
+          </a>
         );
       },
     },
     {
-      accessorKey: "created_date",
-      header: "Created Date",
-      cell: ({ row }) => {
-        const createdDate = row.original.created_date;
-        if (!createdDate) return DEFAULT_VALUES.NOT_AVAILABLE;
-        return new Date(createdDate).toLocaleDateString();
-      },
-    },
-    {
-      id: "actions",
-      header: "Action",
+      id: "status_date",
+      header: "Status & Date",
       cell: ({ row }) => {
         const orderId = row.original.order_id;
         const statusName = row.original.status_name;
+        const createdDate = row.original.created_date;
         const canConfirm = statusName?.toLowerCase() === "new" && user;
-
-        const handleConfirmClick = () => {
-          if (!user) return;
-          setConfirmingOrderId(orderId);
-          updateOrderStatus(
-            {
-              order_id: Number(orderId),
-              user_id: Number(row.original.user_id),
-              acno: row.original.acno,
-              parent_id: Number(user.id),
-              parent_acno: user.acno,
-            },
-            {
-              onSuccess: () => {
-                queryClient.invalidateQueries({
-                  queryKey: [QUERY_KEYS.ORDER.ORDER_LIST],
-                });
-              },
-              onSettled: () => {
-                setConfirmingOrderId(null);
-              },
-            },
-          );
-        };
-
         const isMutatingThisRow = confirmingOrderId === orderId;
 
-        return canConfirm ? (
-          <Button
-            size="sm"
-            onClick={handleConfirmClick}
-            disabled={isMutatingThisRow}
-          >
-            {isMutatingThisRow ? "Confirming..." : "Mark Confirm"}
-          </Button>
-        ) : null;
+        const handleConfirmClick = () => {
+          if (!canConfirm || !user || isMutatingThisRow) return;
+          setConfirmingOrderId(orderId);
+
+          const promise = updateOrderStatusAsync({
+            order_id: Number(orderId),
+            user_id: Number(row.original.user_id),
+            acno: row.original.acno,
+            parent_id: Number(user.id),
+            parent_acno: user.acno,
+          }).finally(() => {
+            setConfirmingOrderId(null);
+          });
+
+          toast.promise(promise, {
+            loading: "Confirming order...",
+            success: (data) => data.message || "Order Confirmed",
+            error: "Failed to confirm order",
+          });
+        };
+
+        return (
+          <div className="flex flex-col gap-1 items-start">
+            {user?.role === "customer" ? (
+              <Badge
+                size="badge-lg"
+                variant={
+                  statusName?.toLowerCase() as React.ComponentProps<
+                    typeof Badge
+                  >["variant"]
+                }
+              >
+                {statusName}
+              </Badge>
+            ) : (
+              <Button
+                size="badge-lg"
+                onClick={canConfirm ? handleConfirmClick : undefined}
+                variant={
+                  statusName?.toLowerCase() as React.ComponentProps<
+                    typeof Button
+                  >["variant"]
+                }
+              >
+                {isMutatingThisRow
+                  ? "Confirming..."
+                  : statusName || DEFAULT_VALUES.NOT_AVAILABLE}
+              </Button>
+            )}
+            <span className="text-[10px] text-muted-foreground">
+              {createdDate ? new Date(createdDate).toLocaleDateString() : ""}
+            </span>
+          </div>
+        );
       },
     },
   ];
@@ -222,6 +256,11 @@ const OrderList = () => {
       </Card>
 
       <OrderFormDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <OrderDetailsDialog
+        open={!!selectedOrder}
+        onOpenChange={(open) => !open && setSelectedOrder(null)}
+        order={selectedOrder}
+      />
     </>
   );
 };

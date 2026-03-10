@@ -10,25 +10,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SignupFormValues, signupSchema } from "@/schema/auth.schema";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthMutation } from "@/hooks/mutations/auth.mutations";
 import Link from "next/link";
-import { useGeoQuery } from "@/hooks/queries/geo.queries";
-import { countryCheck } from "@/lib/utils";
+import { COUNTRY } from "@/lib/constants";
+import Select from "react-select";
+import { singleSelectStyle } from "@/components/shared/react-select-style";
 
 const SignupForm = () => {
   // ====================== Hooks ====================== \\
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const { data: geoData } = useGeoQuery.GetCountry();
-  const country = geoData?.countryCode;
-
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -36,7 +35,7 @@ const SignupForm = () => {
       email: "",
       contact_no: "",
       full_name: "",
-      country,
+      country: undefined,
     },
   });
 
@@ -44,12 +43,18 @@ const SignupForm = () => {
     setIsVisible((prev) => !prev);
   }, []);
 
+  // ====================== Select options ====================== \\
+  const countryOptions = Object.entries(COUNTRY).map(([key, value]) => ({
+    label: key,
+    value,
+  }));
+
   // ====================== Mutations ====================== \\
   const signupMutation = useAuthMutation.SignupMutation();
 
   // ====================== Form Submission ====================== \\
   const onSubmit = (data: SignupFormValues) => {
-    signupMutation.mutate({ ...data, country });
+    signupMutation.mutate({ ...data });
   };
 
   return (
@@ -66,7 +71,6 @@ const SignupForm = () => {
               placeholder="Full Name"
               autoComplete="off"
               type="text"
-              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -80,7 +84,6 @@ const SignupForm = () => {
               placeholder="Contact Number"
               autoComplete="off"
               type="text"
-              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -94,7 +97,6 @@ const SignupForm = () => {
               placeholder="Email"
               autoComplete="off"
               type="text"
-              disabled={countryCheck(country)}
             />
           </Field>
 
@@ -109,7 +111,6 @@ const SignupForm = () => {
               autoComplete="off"
               type={isVisible ? "text" : "password"}
               className="pr-10"
-              disabled={countryCheck(country)}
             />
             <Button
               type="button"
@@ -117,7 +118,6 @@ const SignupForm = () => {
               size="sm"
               onClick={handleTogglePassword}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-max!"
-              disabled={countryCheck(country)}
             >
               {isVisible ? <EyeOff /> : <Eye />}
             </Button>
@@ -130,20 +130,45 @@ const SignupForm = () => {
 
         <FieldGroup className="gap-2">
           <Field>
+            <Controller
+              name="country"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={countryOptions}
+                  value={
+                    countryOptions?.find(
+                      (item) => item.value === field.value,
+                    ) || null
+                  }
+                  onChange={(option) =>
+                    field.onChange(option ? option.value : null)
+                  }
+                  placeholder="Select Country"
+                  isDisabled={signupMutation.isPending}
+                  styles={singleSelectStyle}
+                  isClearable
+                  isSearchable
+                />
+              )}
+            />
+          </Field>
+
+          {errors.email && <FieldError errors={[errors.email]} />}
+        </FieldGroup>
+
+        <FieldGroup className="gap-2">
+          <Field>
             <Button
               type="submit"
               form="signup-form"
               size="lg"
               className="w-full"
-              disabled={signupMutation.isPending || countryCheck(country)}
             >
               {signupMutation.isPending ? "Signing up..." : "Sign up"}
             </Button>
           </Field>
           <Field>
-            <FieldDescription>
-              Note: Signup is currently only available for US and UK customers.
-            </FieldDescription>
             <FieldDescription className="text-center">
               Already have an account? <Link href="/signin">Sign in</Link>
             </FieldDescription>
