@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserX, Boxes, Warehouse } from "lucide-react";
+import { Users, UserX, Boxes, Warehouse, FileCheck, FileX } from "lucide-react";
 import { DashboardPayload } from "@/types/dashboard.types";
 
 interface DashboardStatsProps {
@@ -34,6 +34,20 @@ export function DashboardStats({ data }: DashboardStatsProps) {
         description: "Total inactive accounts",
         icon: UserX,
         color: "text-red-500",
+      },
+      {
+        title: "Total Label Orders",
+        value: data.total_label_orders || 0,
+        description: "Orders with labels",
+        icon: FileCheck,
+        color: "text-emerald-500",
+      },
+      {
+        title: "Total Unlabel Orders",
+        value: data.total_unlabel_orders || 0,
+        description: "Orders without labels",
+        icon: FileX,
+        color: "text-orange-500",
       },
       {
         title: "Total Warehouses",

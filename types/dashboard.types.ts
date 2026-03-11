@@ -31,6 +31,8 @@ export interface DashboardPayload {
   total_inactive_customers?: number;
   total_warehouses?: number;
   recent_customers?: Partial<CustomerListType>[];
+  total_label_orders: number;
+  total_unlabel_orders: number;
 }
 
 export interface DashboardResponse {
