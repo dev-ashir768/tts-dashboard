@@ -9,7 +9,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import { QUERY_KEYS } from "@/lib/constants";
+import { API_ENDPOINTS, QUERY_KEYS } from "@/lib/constants";
 
 export const useOrderMutation = {
   CreateOrderMutation: () => {
@@ -26,7 +26,9 @@ export const useOrderMutation = {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.DASHBOARD.INDEX],
         });
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ORDER.ORDER_LIST] });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ORDER.ORDER_LIST],
+        });
         toast.success(response.message);
       },
       onError: (error) => {
@@ -47,16 +49,24 @@ export const useOrderMutation = {
     return useMutation<
       UpdateOrderStatusResponse,
       AxiosError<ApiErrorResponse>,
-      UpdateOrderStatusRequest
+      {
+        data: UpdateOrderStatusRequest;
+        endpoint:
+          | typeof API_ENDPOINTS.ORDER.ORDER_CONFIRM
+          | typeof API_ENDPOINTS.ORDER.ORDER_CANCEL
+          | typeof API_ENDPOINTS.ORDER.ORDER_POSTED;
+      }
     >({
-      mutationFn: async (data) => {
-        return orderService.updateOrderStatus(data);
+      mutationFn: async ({ data, endpoint }) => {
+        return orderService.updateOrderStatus(data, endpoint);
       },
       onSuccess: (response) => {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.DASHBOARD.INDEX],
         });
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ORDER.ORDER_LIST] });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ORDER.ORDER_LIST],
+        });
         toast.success(response.message);
       },
       onError: (error) => {

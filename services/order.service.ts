@@ -30,9 +30,13 @@ export const orderService = {
   },
   updateOrderStatus: async (
     data: UpdateOrderStatusRequest,
+    endpoint:
+      | typeof API_ENDPOINTS.ORDER.ORDER_CONFIRM
+      | typeof API_ENDPOINTS.ORDER.ORDER_CANCEL
+      | typeof API_ENDPOINTS.ORDER.ORDER_POSTED,
   ): Promise<UpdateOrderStatusResponse> => {
     const response = await apiClient.post<UpdateOrderStatusResponse>(
-      API_ENDPOINTS.ORDER.ORDER_STATUS_UPDATE,
+      endpoint,
       data,
     );
     return response.data;

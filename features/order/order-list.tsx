@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useOrderQuery } from "@/hooks/queries/order.queries";
-import { DEFAULT_VALUES } from "@/lib/constants";
+import { API_ENDPOINTS, DEFAULT_VALUES } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth.store";
 import { OrderListType } from "@/types/order.types";
 import { useState } from "react";
@@ -17,6 +17,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import OrderFormDialog from "./order-form-dialog";
 import { OrderDetailsDialog } from "./order-details-dialog";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 
 const OrderList = () => {
   const { user } = useAuthStore();
@@ -27,6 +28,12 @@ const OrderList = () => {
   const [confirmingOrderId, setConfirmingOrderId] = useState<number | null>(
     null,
   );
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingUpdate, setPendingUpdate] = useState<{
+    order: OrderListType;
+    endpoint: any;
+    label: string;
+  } | null>(null);
 
   // Mutations
   const { mutateAsync: updateOrderStatusAsync } =
@@ -162,61 +169,99 @@ const OrderList = () => {
       header: "Status & Date",
       cell: ({ row }) => {
         const orderId = row.original.order_id;
-        const statusName = row.original.status_name;
+        const statusName = row.original.status_name?.toLowerCase();
         const createdDate = row.original.created_date;
-        const canConfirm = statusName?.toLowerCase() === "new" && user;
         const isMutatingThisRow = confirmingOrderId === orderId;
 
-        const handleConfirmClick = () => {
-          if (!canConfirm || !user || isMutatingThisRow) return;
-          setConfirmingOrderId(orderId);
-
-          const promise = updateOrderStatusAsync({
-            order_id: Number(orderId),
-            user_id: Number(row.original.user_id),
-            acno: row.original.acno,
-            parent_id: Number(user.id),
-            parent_acno: user.acno,
-          }).finally(() => {
-            setConfirmingOrderId(null);
+        const handleStatusUpdate = (endpoint: any, label: string) => {
+          setPendingUpdate({
+            order: row.original,
+            endpoint,
+            label,
           });
+          setConfirmDialogOpen(true);
+        };
 
-          toast.promise(promise, {
-            loading: "Confirming order...",
-            success: (data) => data.message || "Order Confirmed",
-            error: "Failed to confirm order",
-          });
+        const renderStatusBadge = (name: string, variantName: string) => (
+          <Badge
+            size="badge-lg"
+            variant={
+              variantName as React.ComponentProps<typeof Badge>["variant"]
+            }
+            className="capitalize"
+          >
+            {name || DEFAULT_VALUES.NOT_AVAILABLE}
+          </Badge>
+        );
+
+        const renderActions = () => {
+          if (user?.role === "customer") {
+            return renderStatusBadge(
+              row.original.status_name,
+              statusName || "default",
+            );
+          }
+
+          if (!statusName) {
+            return renderStatusBadge(DEFAULT_VALUES.NOT_AVAILABLE, "default");
+          }
+
+          if (statusName === "new") {
+            return (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  onClick={() =>
+                    handleStatusUpdate(
+                      API_ENDPOINTS.ORDER.ORDER_CONFIRM,
+                      "Confirm",
+                    )
+                  }
+                  disabled={isMutatingThisRow}
+                >
+                  {isMutatingThisRow ? "..." : "Confirm"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  onClick={() =>
+                    handleStatusUpdate(
+                      API_ENDPOINTS.ORDER.ORDER_CANCEL,
+                      "Cancel",
+                    )
+                  }
+                  disabled={isMutatingThisRow}
+                >
+                  {isMutatingThisRow ? "..." : "Cancel"}
+                </Button>
+              </div>
+            );
+          }
+
+          if (statusName === "confirmed") {
+            return (
+              <Button
+                size="sm"
+                className="h-7 text-xs px-2 bg-blue-600 hover:bg-blue-700"
+                onClick={() =>
+                  handleStatusUpdate(API_ENDPOINTS.ORDER.ORDER_POSTED, "Post")
+                }
+                disabled={isMutatingThisRow}
+              >
+                {isMutatingThisRow ? "Marking..." : "Mark Posted"}
+              </Button>
+            );
+          }
+
+          return renderStatusBadge(row.original.status_name, statusName);
         };
 
         return (
           <div className="flex flex-col gap-1 items-start">
-            {user?.role === "customer" ? (
-              <Badge
-                size="badge-lg"
-                variant={
-                  statusName?.toLowerCase() as React.ComponentProps<
-                    typeof Badge
-                  >["variant"]
-                }
-              >
-                {statusName}
-              </Badge>
-            ) : (
-              <Button
-                size="badge-lg"
-                onClick={canConfirm ? handleConfirmClick : undefined}
-                variant={
-                  statusName?.toLowerCase() as React.ComponentProps<
-                    typeof Button
-                  >["variant"]
-                }
-              >
-                {isMutatingThisRow
-                  ? "Confirming..."
-                  : statusName || DEFAULT_VALUES.NOT_AVAILABLE}
-              </Button>
-            )}
-            <span className="text-[10px] text-muted-foreground">
+            {renderActions()}
+            <span className="text-[10px] text-muted-foreground mt-1">
               {createdDate ? new Date(createdDate).toLocaleDateString() : ""}
             </span>
           </div>
@@ -224,6 +269,38 @@ const OrderList = () => {
       },
     },
   ];
+
+  const handleConfirmUpdate = async () => {
+    if (!pendingUpdate || !user) return;
+
+    const { order, endpoint, label } = pendingUpdate;
+    setConfirmingOrderId(order.order_id);
+    setConfirmDialogOpen(false);
+
+    try {
+      const promise = updateOrderStatusAsync({
+        data: {
+          order_id: Number(order.order_id),
+          user_id: Number(order.user_id),
+          acno: order.acno,
+          parent_id: Number(user.id),
+          parent_acno: user.acno,
+        },
+        endpoint: endpoint,
+      }).finally(() => {
+        setConfirmingOrderId(null);
+        setPendingUpdate(null);
+      });
+
+      toast.promise(promise, {
+        loading: `${label}...`,
+        success: (data) => data.message || `Order ${label}ed`,
+        error: `Failed to ${label.toLowerCase()} order`,
+      });
+    } catch (error) {
+      console.error("Status Update error:", error);
+    }
+  };
 
   //=========== Render Order List =========//
   const renderOrderList = () => {
@@ -260,6 +337,15 @@ const OrderList = () => {
         open={!!selectedOrder}
         onOpenChange={(open) => !open && setSelectedOrder(null)}
         order={selectedOrder}
+      />
+      <ConfirmDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        onConfirm={handleConfirmUpdate}
+        title={`Confirm ${pendingUpdate?.label}`}
+        description={`Are you sure you want to ${pendingUpdate?.label?.toLowerCase()} this order (${pendingUpdate?.order?.order_id})?`}
+        confirmLabel={pendingUpdate?.label || "Confirm"}
+        isLoading={!!confirmingOrderId}
       />
     </>
   );

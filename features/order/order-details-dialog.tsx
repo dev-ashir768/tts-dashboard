@@ -127,7 +127,7 @@ export function OrderDetailsDialog({
               <div className="space-y-4 text-sm">
                 <div>
                   <span className="text-muted-foreground block mb-2">
-                    Shipper Address:
+                    Shipper/3PL Address:
                   </span>
                   <p className="font-medium bg-muted/50 p-3 rounded-md whitespace-pre-wrap break-all text-xs border border-border/50 min-h-[60px]">
                     {order.shipper_address || "N/A"}
@@ -145,6 +145,42 @@ export function OrderDetailsDialog({
             </div>
           </div>
         </div>
+
+        {order.label_image && order.label_image.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-4">
+              Label Images
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {order.label_image.map((image, index) => {
+                const baseUrl = process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || "";
+                const imageUrl = image.startsWith("http") 
+                  ? image 
+                  : `${baseUrl}/user_${order.user_id}/${image}`;
+
+                return (
+                  <div 
+                    key={index} 
+                    className="relative aspect-square rounded-lg overflow-hidden border bg-muted flex items-center justify-center group cursor-zoom-in"
+                  >
+                    <a 
+                      href={imageUrl} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="w-full h-full"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`Label ${index + 1}`}
+                        className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                      />
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

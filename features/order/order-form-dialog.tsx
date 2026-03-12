@@ -60,6 +60,11 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
       consignee_address: "",
       label_pdf: "",
       remarks: "",
+      label_image_1: "",
+      label_image_2: "",
+      label_image_3: "",
+      label_image_4: "",
+      label_image_5: "",
     },
   });
 
@@ -80,6 +85,11 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
         consignee_address: "",
         label_pdf: "",
         remarks: "",
+        label_image_1: "",
+        label_image_2: "",
+        label_image_3: "",
+        label_image_4: "",
+        label_image_5: "",
       });
     } else if (!open) {
       reset();
@@ -110,6 +120,29 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
     [setValue],
   );
 
+  const onImagesSelect = useCallback(
+    async (files: File[]) => {
+      // Find empty slots
+      const emptySlots: (keyof OrderFormValues)[] = [
+        "label_image_1",
+        "label_image_2",
+        "label_image_3",
+        "label_image_4",
+        "label_image_5",
+      ].filter(
+        (key) => !control._formValues[key as keyof OrderFormValues],
+      ) as (keyof OrderFormValues)[];
+
+      const filesToProcess = files.slice(0, emptySlots.length);
+
+      for (let i = 0; i < filesToProcess.length; i++) {
+        const base64 = await convertToBase64(filesToProcess[i]);
+        setValue(emptySlots[i], base64);
+      }
+    },
+    [setValue, control],
+  );
+
   // ====================== Form Submit ====================== \\
   const onSubmit = (data: OrderFormValues) => {
     const payload: Partial<OrderFormValues> = { ...data };
@@ -120,6 +153,13 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
     if (!payload.label_pdf) {
       delete payload.label_pdf;
     }
+    // Clean up empty image fields
+    [1, 2, 3, 4, 5].forEach((i) => {
+      const key = `label_image_${i}` as keyof OrderFormValues;
+      if (!payload[key]) {
+        delete payload[key];
+      }
+    });
 
     createOrderMutation.mutate(payload as OrderFormValues, {
       onSuccess: () => {
@@ -194,7 +234,7 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
                     onChange={(option) =>
                       field.onChange(option ? option.value : "")
                     }
-                    placeholder="Select Shipper Address *"
+                    placeholder="Select Shipper/3PL Address *"
                     isDisabled={createOrderMutation.isPending}
                     styles={singleSelectStyle}
                     isLoading={warehouseListLoading}
@@ -218,9 +258,7 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
                 rows={3}
               />
             </Field>
-            {errors.remarks && (
-              <FieldError errors={[errors.remarks]} />
-            )}
+            {errors.remarks && <FieldError errors={[errors.remarks]} />}
           </FieldGroup>
           <div className="flex items-center space-x-2 pt-2 pb-1">
             <Checkbox
@@ -319,17 +357,80 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
                 />
               </Field>
               {errors.label_pdf && <FieldError errors={[errors.label_pdf]} />}
-              {errors.root && (
-                <FieldError
-                  errors={[
-                    {
-                      message: errors.root.message as string,
-                    },
-                  ]}
-                />
-              )}
             </FieldGroup>
           )}
+
+          <div className="space-y-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">
+                Label Images (Optional - Max 5)
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Attach up to 5 images for the label (e.g., photos of the
+                package).
+              </p>
+            </div>
+
+            <FileUpload
+              accept="image/*"
+              maxFiles={5}
+              onAccept={onImagesSelect}
+              multiple
+            >
+              <FileUploadDropzone className="border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer">
+                <Upload className="size-6 text-muted-foreground mb-2" />
+                <p className="text-sm font-medium">Upload Images</p>
+                <p className="text-xs text-muted-foreground">
+                  Drag & drop or click to browse
+                </p>
+                <FileUploadTrigger asChild>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 text-xs mt-2"
+                    type="button"
+                  >
+                    Browse Images
+                  </Button>
+                </FileUploadTrigger>
+              </FileUploadDropzone>
+            </FileUpload>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {[1, 2, 3, 4, 5].map((i) => {
+                const key = `label_image_${i}` as keyof OrderFormValues;
+                return (
+                  <Controller
+                    key={key}
+                    name={key}
+                    control={control}
+                    render={({ field }) =>
+                      field.value ? (
+                        <div className="relative aspect-square rounded-md overflow-hidden border group">
+                          <img
+                            src={field.value as string}
+                            alt={`Preview ${i}`}
+                            className="object-cover w-full h-full"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 size-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => field.onChange("")}
+                          >
+                            <X className="size-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <></>
+                      )
+                    }
+                  />
+                );
+              })}
+            </div>
+          </div>
         </form>
         <ResponsiveDialogFooter>
           <ResponsiveDialogClose asChild>

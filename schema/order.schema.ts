@@ -66,6 +66,36 @@ export const orderSchema = z
         message: "Invalid label pdf",
       })
       .optional(),
+    label_image_1: z
+      .string()
+      .refine((val) => !val || val.startsWith("data:image/"), {
+        message: "Invalid image format",
+      })
+      .optional(),
+    label_image_2: z
+      .string()
+      .refine((val) => !val || val.startsWith("data:image/"), {
+        message: "Invalid image format",
+      })
+      .optional(),
+    label_image_3: z
+      .string()
+      .refine((val) => !val || val.startsWith("data:image/"), {
+        message: "Invalid image format",
+      })
+      .optional(),
+    label_image_4: z
+      .string()
+      .refine((val) => !val || val.startsWith("data:image/"), {
+        message: "Invalid image format",
+      })
+      .optional(),
+    label_image_5: z
+      .string()
+      .refine((val) => !val || val.startsWith("data:image/"), {
+        message: "Invalid image format",
+      })
+      .optional(),
   })
   .superRefine((data, ctx) => {
     const hasAddress =

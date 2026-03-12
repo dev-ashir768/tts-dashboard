@@ -37,7 +37,10 @@ export const API_ENDPOINTS = {
   ORDER: {
     ORDER_LIST: "/orders/list",
     CREATE_ORDER: "/orders/create",
-    ORDER_STATUS_UPDATE: "/orders/mark_confirm_status",
+    ORDER_CONFIRM: "/orders/mark_confirm_status",
+    ORDER_CANCEL: "/orders/mark_cancelled_status",
+    ORDER_POSTED: "/orders/mark_posted_status",
+
   },
   WAREHOUSE: {
     WAREHOUSE_LIST: "/warehouse/list",
