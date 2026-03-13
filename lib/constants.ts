@@ -13,41 +13,41 @@ export const STORAGE_KEYS = {
 
 export const API_ENDPOINTS = {
   AUTH: {
-    SIGNIN: "/auth/login",
-    SIGNUP: "/auth/register",
-    VERIFY_OTP: "/auth/otp",
+    SIGNIN: "/auth/login.php",
+    SIGNUP: "/auth/register.php",
+    VERIFY_OTP: "/auth/otp.php",
   },
   USER: {
-    CHANGE_PASSWORD: "/auth/change_password",
-    USER_PROFILE: "/profile/update",
-    USER_BY_ID: "/profile/index",
+    CHANGE_PASSWORD: "/auth/change_password.php",
+    USER_PROFILE: "/profile/update.php",
+    USER_BY_ID: "/profile/index.php",
   },
   CUSTOMER: {
-    CUSTOMER_LIST: "/customers/list",
-    CUSTOMER_STATUS_UPDATE: "/customers/status",
+    CUSTOMER_LIST: "/customers/list.php",
+    CUSTOMER_STATUS_UPDATE: "/customers/status.php",
   },
   STAFF: {
-    STAFF_LIST: "/staff/list",
-    STAFF_STATUS_UPDATE: "/staff/status",
-    CREATE_STAFF: "/staff/create",
+    STAFF_LIST: "/staff/list.php",
+    STAFF_STATUS_UPDATE: "/staff/status.php",
+    CREATE_STAFF: "/staff/create.php",
   },
   ADMIN: {
-    ADMIN_LIST: "/admin/list",
+    ADMIN_LIST: "/admin/list.php",
   },
   ORDER: {
-    ORDER_LIST: "/orders/list",
-    CREATE_ORDER: "/orders/create",
-    ORDER_CONFIRM: "/orders/mark_confirm_status",
-    ORDER_CANCEL: "/orders/mark_cancelled_status",
-    ORDER_POSTED: "/orders/mark_posted_status",
+    ORDER_LIST: "/orders/list.php",
+    CREATE_ORDER: "/orders/create.php",
+    ORDER_CONFIRM: "/orders/mark_confirm_status.php",
+    ORDER_CANCEL: "/orders/mark_cancelled_status.php",
+    ORDER_POSTED: "/orders/mark_posted_status.php",
 
   },
   WAREHOUSE: {
-    WAREHOUSE_LIST: "/warehouse/list",
-    CREATE_WAREHOUSE: "/warehouse/create",
+    WAREHOUSE_LIST: "/warehouse/list.php",
+    CREATE_WAREHOUSE: "/warehouse/create.php",
   },
   DASHBOARD: {
-    INDEX: "/dashboard/index",
+    INDEX: "/dashboard/index.php",
   },
 } as const;
 
