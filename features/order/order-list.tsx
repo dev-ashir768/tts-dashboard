@@ -19,19 +19,25 @@ import OrderFormDialog from "./order-form-dialog";
 import { OrderDetailsDialog } from "./order-details-dialog";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 
+type OrderStatusEndpoint =
+  | typeof API_ENDPOINTS.ORDER.ORDER_CONFIRM
+  | typeof API_ENDPOINTS.ORDER.ORDER_CANCEL
+  | typeof API_ENDPOINTS.ORDER.ORDER_POSTED;
+
 const OrderList = () => {
   const { user } = useAuthStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderListType | null>(
     null,
   );
-  const [confirmingOrderId, setConfirmingOrderId] = useState<number | null>(
-    null,
-  );
+  const [activeAction, setActiveAction] = useState<{
+    id: number;
+    label: string;
+  } | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingUpdate, setPendingUpdate] = useState<{
     order: OrderListType;
-    endpoint: any;
+    endpoint: OrderStatusEndpoint;
     label: string;
   } | null>(null);
 
@@ -171,9 +177,18 @@ const OrderList = () => {
         const orderId = row.original.order_id;
         const statusName = row.original.status_name?.toLowerCase();
         const createdDate = row.original.created_date;
-        const isMutatingThisRow = confirmingOrderId === orderId;
 
-        const handleStatusUpdate = (endpoint: any, label: string) => {
+        const isConfirmLoading =
+          activeAction?.id === orderId && activeAction?.label === "Confirm";
+        const isCancelLoading =
+          activeAction?.id === orderId && activeAction?.label === "Cancel";
+        const isPostLoading =
+          activeAction?.id === orderId && activeAction?.label === "Post";
+
+        const handleStatusUpdate = (
+          endpoint: OrderStatusEndpoint,
+          label: string,
+        ) => {
           setPendingUpdate({
             order: row.original,
             endpoint,
@@ -218,9 +233,9 @@ const OrderList = () => {
                       "Confirm",
                     )
                   }
-                  disabled={isMutatingThisRow}
+                  disabled={!!activeAction}
                 >
-                  {isMutatingThisRow ? "..." : "Confirm"}
+                  {isConfirmLoading ? "..." : "Confirm"}
                 </Button>
                 <Button
                   size="sm"
@@ -232,9 +247,9 @@ const OrderList = () => {
                       "Cancel",
                     )
                   }
-                  disabled={isMutatingThisRow}
+                  disabled={!!activeAction}
                 >
-                  {isMutatingThisRow ? "..." : "Cancel"}
+                  {isCancelLoading ? "..." : "Cancel"}
                 </Button>
               </div>
             );
@@ -248,9 +263,9 @@ const OrderList = () => {
                 onClick={() =>
                   handleStatusUpdate(API_ENDPOINTS.ORDER.ORDER_POSTED, "Post")
                 }
-                disabled={isMutatingThisRow}
+                disabled={!!activeAction}
               >
-                {isMutatingThisRow ? "Marking..." : "Mark Posted"}
+                {isPostLoading ? "Marking..." : "Mark Posted"}
               </Button>
             );
           }
@@ -274,7 +289,7 @@ const OrderList = () => {
     if (!pendingUpdate || !user) return;
 
     const { order, endpoint, label } = pendingUpdate;
-    setConfirmingOrderId(order.order_id);
+    setActiveAction({ id: order.order_id, label });
     setConfirmDialogOpen(false);
 
     try {
@@ -288,7 +303,7 @@ const OrderList = () => {
         },
         endpoint: endpoint,
       }).finally(() => {
-        setConfirmingOrderId(null);
+        setActiveAction(null);
         setPendingUpdate(null);
       });
 
@@ -345,7 +360,7 @@ const OrderList = () => {
         title={`Confirm ${pendingUpdate?.label}`}
         description={`Are you sure you want to ${pendingUpdate?.label?.toLowerCase()} this order (${pendingUpdate?.order?.order_id})?`}
         confirmLabel={pendingUpdate?.label || "Confirm"}
-        isLoading={!!confirmingOrderId}
+        isLoading={!!activeAction}
       />
     </>
   );

@@ -49,6 +49,11 @@ export const API_ENDPOINTS = {
   DASHBOARD: {
     INDEX: "/dashboard/index.php",
   },
+  INVENTORY: {
+    INVENTORY_LIST: "/inventory/list.php",
+    CREATE_INVENTORY: "/inventory/create.php",
+    UPDATE_INVENTORY: "/inventory/update.php",
+  },
 } as const;
 
 export const QUERY_KEYS = {
@@ -69,6 +74,9 @@ export const QUERY_KEYS = {
   },
   WAREHOUSE: {
     WAREHOUSE_LIST: "warehouse-list",
+  },
+  INVENTORY: {
+    INVENTORY_LIST: "inventory-list",
   },
   DASHBOARD: {
     INDEX: "dashboard-index",

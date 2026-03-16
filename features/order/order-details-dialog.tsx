@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -169,9 +170,11 @@ export function OrderDetailsDialog({
                       rel="noreferrer"
                       className="w-full h-full"
                     >
-                      <img
+                      <Image
                         src={imageUrl}
                         alt={`Label ${index + 1}`}
+                        width={200}
+                        height={200}
                         className="object-cover w-full h-full transition-transform group-hover:scale-105"
                       />
                     </a>

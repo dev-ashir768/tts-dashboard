@@ -32,6 +32,7 @@ import { OrderFormValues, orderSchema } from "@/schema/order.schema";
 import { useWarehouseQuery } from "@/hooks/queries/warehouse.queries";
 import { singleSelectStyle } from "@/components/shared/react-select-style";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
 
 interface OrderFormDialogProps {
   open: boolean;
@@ -407,10 +408,12 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
                     render={({ field }) =>
                       field.value ? (
                         <div className="relative aspect-square rounded-md overflow-hidden border group">
-                          <img
+                          <Image
                             src={field.value as string}
                             alt={`Preview ${i}`}
                             className="object-cover w-full h-full"
+                            width={100}
+                            height={100}
                           />
                           <Button
                             type="button"
