@@ -5,7 +5,7 @@ export interface SelectOption {
   value: number | string | boolean;
 }
 
-export const singleSelectStyle: StylesConfig<SelectOption, false> = {
+export const singleSelectStyle: StylesConfig<any, false> = { // eslint-disable-line @typescript-eslint/no-explicit-any
   control: (provided, state) => ({
     ...provided,
     border: state.isFocused
@@ -53,7 +53,7 @@ export const singleSelectStyle: StylesConfig<SelectOption, false> = {
   }),
 };
 
-export const multiSelectStyle: StylesConfig<SelectOption, true> = {
+export const multiSelectStyle: StylesConfig<any, true> = { // eslint-disable-line @typescript-eslint/no-explicit-any
   control: (provided, state) => ({
     ...provided,
     border: state.isFocused

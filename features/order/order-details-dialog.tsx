@@ -147,6 +147,69 @@ export function OrderDetailsDialog({
           </div>
         </div>
 
+        {order.inventory_items && order.inventory_items.length > 0 && (
+          <div className="mt-8 border-t pt-6">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-4">
+              Inventory Items
+            </h3>
+            <div className="space-y-3">
+              {order.inventory_items.map((item, index) => {
+                const baseUrl =
+                  process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || "";
+                const imageUrl =
+                  item.image &&
+                  (item.image.startsWith("http")
+                    ? item.image
+                    : `${baseUrl}/user_1/${item.image}`);
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 p-3 rounded-lg border bg-muted/30"
+                  >
+                    <div className="size-16 rounded-md overflow-hidden border bg-background shrink-0">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={item.sku_name}
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <div className="size-full flex items-center justify-center text-[10px] text-muted-foreground">
+                          No image
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate leading-none mb-1">
+                        {item.sku_name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate mb-1">
+                        SKU: {item.sku_code} | Price: {item.amount}
+                      </p>
+                      {item.description && (
+                        <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
+                        Quantity
+                      </div>
+                      <div className="text-sm font-bold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full inline-block">
+                        {item.quantity}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {order.label_image && order.label_image.length > 0 && (
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-muted-foreground mb-4">

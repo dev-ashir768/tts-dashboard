@@ -16,6 +16,15 @@ export interface OrderListType {
   label_image?: string[];
   country: (typeof COUNTRY)[keyof typeof COUNTRY];
   created_date: string;
+  inventory_items: {
+    sku_id: number;
+    sku_name: string;
+    sku_code: string;
+    quantity: number;
+    amount: number;
+    description: string;
+    image: string;
+  }[];
 }
 
 export interface OrderListResponse {

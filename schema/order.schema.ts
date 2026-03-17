@@ -96,6 +96,19 @@ export const orderSchema = z
         message: "Invalid image format",
       })
       .optional(),
+    inventory_items: z
+      .array(
+        z.object({
+          sku_id: z.number(),
+          sku_name: z.string(),
+          sku_code: z.string(),
+          quantity: z.number().min(1, { message: "Quantity must be at least 1" }),
+          amount: z.number(),
+          description: z.string().optional(),
+          image: z.string().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
     const hasAddress =
