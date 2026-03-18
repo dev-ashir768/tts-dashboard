@@ -38,6 +38,7 @@ import { useOrderMutation } from "@/hooks/mutations/order.mutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth.store";
+import { toast } from "sonner";
 import { cn, convertToBase64 } from "@/lib/utils";
 import { OrderFormValues, orderSchema } from "@/schema/order.schema";
 import { useWarehouseQuery } from "@/hooks/queries/warehouse.queries";
@@ -260,7 +261,7 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
   };
 
   // ====================== Form Submit ====================== \\
-  const onSubmit = (data: OrderFormValues) => {
+  const onSubmit = async (data: OrderFormValues) => {
     const payload: Partial<OrderFormValues> = { ...data };
 
     if (!payload.consignee_address) {
@@ -277,8 +278,37 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
       }
     });
 
-    createOrderMutation.mutate(payload as OrderFormValues, {
-      onSuccess: () => {
+    try {
+      const response = await createOrderMutation.mutateAsync(
+        payload as OrderFormValues,
+      );
+      const orderId = response.payload.order_id;
+
+      if (data.inventory_items && data.inventory_items.length > 0) {
+        toast.loading("Redirecting to payment...", { id: "checkout" });
+        const checkoutResponse = await fetch("/api/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_id: orderId,
+            inventory_items: data.inventory_items,
+            user_id: data.user_id,
+            acno: data.acno,
+            api_key: user?.api_key,
+          }),
+        });
+
+        const { url, error } = await checkoutResponse.json();
+
+        if (url) {
+          window.location.href = url;
+        } else {
+          toast.error(error || "Failed to initiate checkout", { id: "checkout" });
+        }
+      } else {
+        toast.dismiss("checkout");
         onOpenChange(false);
         reset();
         queryClient.invalidateQueries({
@@ -288,8 +318,10 @@ const OrderFormDialog = ({ open, onOpenChange }: OrderFormDialogProps) => {
             ...(user?.id ? [user.id] : []),
           ],
         });
-      },
-    });
+      }
+    } catch (error) {
+      console.error("Order process error:", error);
+    }
   };
 
   return (
