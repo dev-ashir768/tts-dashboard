@@ -1,0 +1,32 @@
+name: Deploy tts-dashboard to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/repo/tts-dashboard
+
+            # latest code pull
+            git pull origin main
+
+            # install deps
+            npm install
+
+            # build next app
+            npm run build
+
+            # restart app
+            pm2 restart tts-dashboard || pm2 start npm --name "tts-dashboard" -- start

@@ -11,6 +11,7 @@ export interface User {
   role: string;
   api_key: string;
   otp_verify: number;
+  is_onboard: number;
   created_date: string;
   status: number;
   is_deleted: number;

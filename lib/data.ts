@@ -81,4 +81,14 @@ export const menusData = [
     parent_id: null,
     children: [],
   },
+  {
+    menu_id: 600,
+    menu_name: "Subscription",
+    icon: "ShoppingCart",
+    sorting: 6,
+    url: "/subscription",
+    permission: [ROLE.CUSTOMER],
+    parent_id: null,
+    children: [],
+  },
 ];

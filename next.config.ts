@@ -14,7 +14,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "72.62.170.13",
-        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "portal.tiksly.com",
         pathname: "/**",
       },
     ],

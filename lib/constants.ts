@@ -40,7 +40,6 @@ export const API_ENDPOINTS = {
     ORDER_CONFIRM: "/orders/mark_confirm_status.php",
     ORDER_CANCEL: "/orders/mark_cancelled_status.php",
     ORDER_POSTED: "/orders/mark_posted_status.php",
-
   },
   WAREHOUSE: {
     WAREHOUSE_LIST: "/warehouse/list.php",
@@ -53,6 +52,9 @@ export const API_ENDPOINTS = {
     INVENTORY_LIST: "/inventory/list.php",
     CREATE_INVENTORY: "/inventory/create.php",
     UPDATE_INVENTORY: "/inventory/update.php",
+  },
+  SUBSCRIPTION: {
+    CREATE_CHECKOUT_SESSION: "/api/subscription",
   },
 } as const;
 
